@@ -37,6 +37,8 @@ if( typeof module !== 'undefined' )
 {
 
   let _ = require( '../../Tools.s' );
+  _.include( 'wLooker' );
+  _.include( 'wSelector' );
 
 }
 
