@@ -1,0 +1,33 @@
+
+{
+  "name": "wesolver",
+  "version": "0.3.0",
+  "description": "Collection of routines to resolve complex data structures. It takes a complex data structure, traverses it and resolves all strings having inlined special substrings. Use the module to resolve your templates.",
+  "author": "Kostiantyn Wandalen <wanalen@willbe.so>",
+  "license": "MIT",
+  "main": "proto/dwtools/abase/l6/Resolver.s",
+  "files": [
+    "proto/dwtools/abase/l6",
+    "proto/dwtools/Tools.s"
+  ],
+  "scripts": {
+    "test": "wtest proto",
+    "docgen": "wdocgen proto"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Wandalen/wResolver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Wandalen/wResolver/issues"
+  },
+  "dependencies": {
+    "wTools": ""
+  },
+  "devDependencies": {
+    "wTesting": ""
+  },
+  "keywords": [
+    "wTools"
+  ]
+}
