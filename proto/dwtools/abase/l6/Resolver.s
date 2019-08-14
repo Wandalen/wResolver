@@ -385,6 +385,8 @@ function _onSelectorDown()
   if( it.continue && _.arrayIs( it.dst ) && it.src.composite === _.select.composite )
   {
 
+    debugger;
+
     for( let d = 0 ; d < it.dst.length ; d++ )
     if( _.errIs( it.dst[ d ] ) )
     throw it.dst[ d ];
@@ -438,8 +440,6 @@ function _onDownEnd()
 
   if( !it.dstWritingDown )
   return;
-
-  debugger;
 
   resolver._functionStringsJoinDown.call( it );
 
@@ -891,8 +891,6 @@ function _resolveAct( o )
     o.iterationPreserve = o.iterationPreserve || Object.create( null );
     if( o.iterationPreserve.isFunction === undefined )
     o.iterationPreserve.isFunction = null;
-
-    debugger;
 
     result = _.select
     ({

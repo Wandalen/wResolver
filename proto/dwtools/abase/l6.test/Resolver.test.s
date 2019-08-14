@@ -10,7 +10,7 @@ if( typeof module !== 'undefined' )
   _.include( 'wTesting' );
   _.include( 'wLogger' );
 
-  require( '../l7/Resolver.s' );
+  require( '../l6/Resolver.s' );
 
 }
 

@@ -6,7 +6,7 @@ Collection of routines to resolve complex data structures. It takes a complex da
 ## Sample
 
 ```
-var _ = require( './Resolver.s' );
+var _ = require( 'wresolver' );
 var src =
 {
   dir :
@@ -35,5 +35,3 @@ console.log( resolved );
 npm install
 node sample/Sample.s
 ```
-
-
