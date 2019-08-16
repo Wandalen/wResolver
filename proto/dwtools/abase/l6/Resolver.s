@@ -747,7 +747,7 @@ function errResolvingThrow( o )
   ({
     selector : o.selector,
     rop : o.rop,
-    err : err,
+    err : o.err,
   });
 
   if( o.missingAction === 'throw' )
