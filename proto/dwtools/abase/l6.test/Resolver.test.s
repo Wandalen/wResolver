@@ -208,7 +208,7 @@ function selectorNormalize( test )
 var Self =
 {
 
-  name : 'Tools/base/l7/Resolver',
+  name : 'Tools.base.l7.Resolver',
   silencing : 1,
 
   context :

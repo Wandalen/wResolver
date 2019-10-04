@@ -29,7 +29,7 @@ opener
 
 /* replace by more genertic :
 
-nickName
+qualifiedName
 
 */
 
@@ -473,8 +473,8 @@ function _onQuantitativeFail( err )
     {
       if( _.strIs( e ) )
       return e;
-      if( _.strIs( e.nickName ) )
-      return e.nickName;
+      if( _.strIs( e.qualifiedName ) )
+      return e.qualifiedName;
       isString = 0
     });
 
@@ -721,7 +721,7 @@ function errResolving( o )
   _.assertRoutineOptions( errResolving, arguments );
   _.assert( arguments.length === 1 );
   debugger;
-  return _.err( 'Failed to resolve', _.color.strFormat( o.selector, 'code' ), '\n', o.err );
+  return _.err( 'Failed to resolve', _.color.strFormat( o.selector, 'path' ), '\n', o.err );
 }
 
 errResolving.defaults =
@@ -916,7 +916,7 @@ function _resolveAct( o )
   }
   catch( err )
   {
-    debugger;
+    // debugger;
     throw resolver.errResolving
     ({
       selector : o.selector,
