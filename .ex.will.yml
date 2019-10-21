@@ -23,7 +23,7 @@ about :
 path :
 
   repository : git+https:///github.com/Wandalen/wResolver.git
-  remotes :
+  origins :
    - git+https:///github.com/Wandalen/wResolver.git
    - npm:///wresolver
   bugtracker : https:///github.com/Wandalen/wResolver/issues
