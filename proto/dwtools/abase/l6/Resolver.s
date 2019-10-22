@@ -17,19 +17,15 @@
  * @memberof module:Tools/base/Resolver
  */
 
-/* screen out :
+/* qqq implement please :
 
-will
-reflector
-path
-module
-opener
+- detect of recursion
+  for example :
+    path :
+      in : '.'
+      out : 'out'
+      export : '{path::export}/**'
 
-*/
-
-/* replace by more genertic :
-
-qualifiedName
 
 */
 
