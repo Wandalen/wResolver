@@ -201,6 +201,93 @@ function selectorNormalize( test )
 
 }
 
+//
+
+function trivialResolve( test )
+{
+
+  test.case = 'trivial';
+  var src =
+  {
+    dir :
+    {
+      val1 : 'Hello'
+    },
+    val2 : 'here',
+  }
+  var exp = 'Hello from here!';
+  var got = _.Resolver.resolve
+  ({
+    src : src,
+    selector : '{::dir/val1} from {::val2}!',
+  });
+  test.identical( got, exp );
+  console.log( got );
+
+}
+
+//
+
+function qualifiedResolve( test )
+{
+
+  /* */
+
+  test.case = 'trivial';
+  var src =
+  {
+    dir :
+    {
+      val1 : 'Hello'
+    },
+    val2 : 'here',
+  }
+  var exp = 'Hello from here!';
+  var got = _.Resolver.resolve
+  ({
+    src : src,
+    selector : '{dir::val1} from {val2::.}!',
+  });
+  test.identical( got, exp );
+  console.log( got );
+
+  /* */
+
+  test.case = 'deep';
+  var src =
+  {
+    var :
+    {
+      dir :
+      {
+        x : 13,
+      }
+    },
+    about :
+    {
+      user : 'user1',
+    },
+    result :
+    {
+      dir :
+      {
+        userX : '{about::user} - {var::dir/x}'
+      }
+    },
+  }
+  var exp = 'user1 - 13 !';
+  var got = _.Resolver.resolve
+  ({
+    src : src,
+    selector : '{result::dir/userX} !',
+  });
+  test.identical( got, exp );
+  console.log( got );
+
+  /* */
+
+}
+
 // --
 // declare
 // --
@@ -220,6 +307,9 @@ var Self =
 
     selectorParse,
     selectorNormalize,
+
+    trivialResolve,
+    qualifiedResolve,
 
   }
 

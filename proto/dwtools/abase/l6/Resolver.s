@@ -365,8 +365,87 @@ function _onSelector( selector )
 
 //
 
-let _onSelectorComposite = _.select.functor.onSelectorComposite({ isStrippedSelector : 1 });
-/* let _onSelectorDown = _.select.functor.onSelectorDownComposite({}); */
+function onSelectorComposite_functor( fop )
+{
+
+  fop = _.routineOptions( onSelectorComposite_functor, arguments );
+  fop.prefix = _.arrayAs( fop.prefix );
+  fop.postfix = _.arrayAs( fop.postfix );
+  fop.onSelector = fop.onSelector || onSelector;
+
+  _.assert( _.strsAreAll( fop.prefix ) );
+  _.assert( _.strsAreAll( fop.postfix ) );
+  _.assert( _.routineIs( fop.onSelector ) );
+
+  return function onSelectorComposite( selector )
+  {
+    let it = this;
+
+    if( !_.strIs( selector ) )
+    return;
+
+    let selector2 = _.strSplitFast
+    ({
+      src : selector,
+      delimeter : _.arrayAppendArrays( [], [ fop.prefix, fop.postfix ] ),
+    });
+
+    if( selector2[ 0 ] === '' )
+    selector2.splice( 0, 1 );
+    if( selector2[ selector2.length-1 ] === '' )
+    selector2.pop();
+
+    if( selector2.length < 3 )
+    {
+      if( fop.isStrippedSelector )
+      return fop.onSelector.call( it, selector );
+      else
+      return;
+    }
+
+    if( selector2.length === 3 )
+    if( _.strsEquivalentAny( fop.prefix, selector2[ 0 ] ) && _.strsEquivalentAny( fop.postfix, selector2[ 2 ] ) )
+    return fop.onSelector.call( it, selector2[ 1 ] );
+
+    selector2 = _.strSplitsCoupledGroup({ splits : selector2, prefix : '{', postfix : '}' });
+
+    if( fop.onSelector )
+    selector2 = selector2.map( ( split ) =>
+    {
+      if( !_.arrayIs( split ) )
+      return split;
+      _.assert( split.length === 3 )
+      if( fop.onSelector.call( it, split[ 1 ] ) === undefined )
+      return split.join( '' );
+      else
+      return split;
+    });
+
+    selector2 = selector2.map( ( split ) => _.arrayIs( split ) ? split.join( '' ) : split );
+    selector2.composite = _.select.composite;
+
+    return selector2;
+  }
+
+  function onSelector( selector )
+  {
+    return selector;
+  }
+
+}
+
+onSelectorComposite_functor.defaults =
+{
+  prefix : '{',
+  postfix : '}',
+  onSelector : null,
+  isStrippedSelector : 0,
+}
+
+let _onSelectorComposite = onSelectorComposite_functor({ isStrippedSelector : 1 });
+
+// let _onSelectorComposite = _.select.functor.onSelectorComposite({ isStrippedSelector : 1 });
+// /* let _onSelectorDown = _.select.functor.onSelectorDownComposite({}); */
 
 //
 
@@ -380,8 +459,6 @@ function _onSelectorDown()
 
   if( it.continue && _.arrayIs( it.dst ) && it.src.composite === _.select.composite )
   {
-
-    debugger;
 
     for( let d = 0 ; d < it.dst.length ; d++ )
     if( _.errIs( it.dst[ d ] ) )
@@ -400,14 +477,24 @@ function _onUpBegin()
   let it = this;
   let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
   let resolver = rop.Resolver;
-
-  debugger;
+  let doing = true;
 
   if( !it.dstWritingDown )
   return;
 
   resolver._queryParse.call( it );
   resolver._resourceMapSelect.call( it );
+
+  let recursing = _.strIs( it.dst ) && resolver._selectorIs( it.dst );
+  if( recursing )
+  {
+
+    let o2 = _.mapOnly( it, resolver.resolve.defaults );
+    o2.selector = it.dst;
+    o2.src = it.iterator.src;
+    it.src = resolver.resolve( o2 );
+
+  }
 
 }
 
@@ -418,8 +505,6 @@ function _onUpEnd()
   let it = this;
   let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
   let resolver = rop.Resolver;
-
-  debugger;
 
   if( !it.dstWritingDown )
   return;
@@ -630,21 +715,18 @@ function _resourceMapSelect()
   let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
   let resolver = rop.Resolver;
 
-  debugger;
-
-  if( !it.selector )
+  if( it.selector === undefined || it.selector === null )
   return;
 
-  debugger;
-
   let kind = it.parsedSelector.kind;
-
   if( kind === '' || kind === null )
   {
+    // debugger;
   }
   else if( kind === 'f' )
   {
 
+    debugger;
     it.isFunction = it.selector;
     if( it.selector === 'strings.join' )
     {
@@ -655,9 +737,17 @@ function _resourceMapSelect()
   }
   else
   {
-    debugger;
-    throw _.ErrorLooking( 'Unknown kind of resource', _.strQuote( it.parsedSelector.full ) );
+    let root = it.root || it;
+    it.src = it.iterator.src[ kind ];
+    if( it.selector === '.' )
+    it.src = { '.' : it.src }
+    it.srcChanged();
   }
+  // else
+  // {
+  //   debugger;
+  //   throw _.ErrorLooking( 'Unknown kind of resource', _.strQuote( it.parsedSelector.full ) );
+  // }
 
 }
 
