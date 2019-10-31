@@ -479,6 +479,9 @@ function _onUpBegin()
   let resolver = rop.Resolver;
   let doing = true;
 
+  if( _global_.debugger )
+  debugger;
+
   if( !it.dstWritingDown )
   return;
 
@@ -884,7 +887,7 @@ function resolve_body( o )
   let resolver = this;
 
   _.assert( !!resolver._resolveAct );
-  _.assert( o.prefixlessAction === 'default' || o.defaultResourceKind === null, 'Prefixless action should be "default" if default resource is provided' );
+  // _.assert( o.prefixlessAction === 'default' || o.defaultResourceKind === null, 'Prefixless action should be "default" if default resource is provided' );
 
   let result = resolver._resolveAct( o );
 
