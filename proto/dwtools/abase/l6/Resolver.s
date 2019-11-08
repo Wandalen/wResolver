@@ -457,6 +457,8 @@ function _onSelectorDown()
 
   resolver._arrayFlatten.call( it );
 
+  // resolver._functionStringsJoinDown.call( it );
+
   if( it.continue && _.arrayIs( it.dst ) && it.src.composite === _.select.composite )
   {
 
@@ -524,6 +526,12 @@ function _onDownEnd()
 
   if( !it.dstWritingDown )
   return;
+
+  if( _.arrayIs( it.src ) && it.src[ functionSymbol ] )
+  {
+    debugger;
+    _global_.debugger = 1;
+  }
 
   resolver._functionStringsJoinDown.call( it );
 
@@ -795,6 +803,7 @@ function _functionStringsJoinDown()
   }
   else
   {
+    _.assert( _.routineIs( it.dst.join ) );
     it.dst = it.dst.join( ' ' );
   }
 
@@ -872,8 +881,8 @@ function resolve_pre( routine, args )
 
   _.assert( arguments.length === 2 );
   _.assert( args.length === 1 );
-  _.assert( _.arrayHas( [ 'undefine', 'throw', 'error' ], o.missingAction ), 'Unknown value of option missing action', o.missingAction );
-  _.assert( _.arrayHas( [ 'default', 'resolved', 'throw', 'error' ], o.prefixlessAction ), 'Unknown value of option prefixless action', o.prefixlessAction );
+  _.assert( _.longHas( [ 'undefine', 'throw', 'error' ], o.missingAction ), 'Unknown value of option missing action', o.missingAction );
+  _.assert( _.longHas( [ 'default', 'resolved', 'throw', 'error' ], o.prefixlessAction ), 'Unknown value of option prefixless action', o.prefixlessAction );
   _.assert( _.arrayIs( o.visited ) );
   _.assert( !o.defaultResourceKind || !_.strHas( o.defaultResourceKind, '*' ), () => 'Expects non glob {-defaultResourceKind-}, but got ' + _.strQuote( o.defaultResourceKind ) );
 
