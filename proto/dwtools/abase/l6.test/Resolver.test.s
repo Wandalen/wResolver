@@ -253,7 +253,7 @@ function qualifiedResolve( test )
 
   /* */
 
-  test.case = 'deep';
+  test.case = 'deep, implicit';
   var src =
   {
     var :

@@ -371,11 +371,11 @@ function onSelectorComposite_functor( fop )
   fop = _.routineOptions( onSelectorComposite_functor, arguments );
   fop.prefix = _.arrayAs( fop.prefix );
   fop.postfix = _.arrayAs( fop.postfix );
-  fop.onSelector = fop.onSelector || onSelector;
+  fop.onSelectorReplicate = fop.onSelectorReplicate || onSelectorReplicate;
 
   _.assert( _.strsAreAll( fop.prefix ) );
   _.assert( _.strsAreAll( fop.postfix ) );
-  _.assert( _.routineIs( fop.onSelector ) );
+  _.assert( _.routineIs( fop.onSelectorReplicate ) );
 
   return function onSelectorComposite( selector )
   {
@@ -398,24 +398,24 @@ function onSelectorComposite_functor( fop )
     if( selector2.length < 3 )
     {
       if( fop.isStrippedSelector )
-      return fop.onSelector.call( it, selector );
+      return fop.onSelectorReplicate.call( it, selector );
       else
       return;
     }
 
     if( selector2.length === 3 )
     if( _.strsEquivalentAny( fop.prefix, selector2[ 0 ] ) && _.strsEquivalentAny( fop.postfix, selector2[ 2 ] ) )
-    return fop.onSelector.call( it, selector2[ 1 ] );
+    return fop.onSelectorReplicate.call( it, selector2[ 1 ] );
 
     selector2 = _.strSplitsCoupledGroup({ splits : selector2, prefix : '{', postfix : '}' });
 
-    if( fop.onSelector )
+    if( fop.onSelectorReplicate )
     selector2 = selector2.map( ( split ) =>
     {
       if( !_.arrayIs( split ) )
       return split;
       _.assert( split.length === 3 )
-      if( fop.onSelector.call( it, split[ 1 ] ) === undefined )
+      if( fop.onSelectorReplicate.call( it, split[ 1 ] ) === undefined )
       return split.join( '' );
       else
       return split;
@@ -427,7 +427,7 @@ function onSelectorComposite_functor( fop )
     return selector2;
   }
 
-  function onSelector( selector )
+  function onSelectorReplicate( selector )
   {
     return selector;
   }
@@ -438,14 +438,14 @@ onSelectorComposite_functor.defaults =
 {
   prefix : '{',
   postfix : '}',
-  onSelector : null,
+  onSelectorReplicate : null,
   isStrippedSelector : 0,
 }
 
 let _onSelectorComposite = onSelectorComposite_functor({ isStrippedSelector : 1 });
 
-// let _onSelectorComposite = _.select.functor.onSelectorComposite({ isStrippedSelector : 1 });
-// /* let _onSelectorDown = _.select.functor.onSelectorDownComposite({}); */
+// let _onSelectorComposite = _.selector.functor.onSelectorComposite({ isStrippedSelector : 1 });
+// /* let _onSelectorDown = _.selector.functor.onSelectorDownComposite({}); */
 
 //
 
@@ -898,6 +898,7 @@ function resolve_body( o )
   _.assert( !!resolver._resolveAct );
   // _.assert( o.prefixlessAction === 'default' || o.defaultResourceKind === null, 'Prefixless action should be "default" if default resource is provided' );
 
+  debugger;
   let result = resolver._resolveAct( o );
 
   if( result === undefined )
@@ -997,8 +998,9 @@ function _resolveAct( o )
       selector : o.selector,
       preservingIteration : o.preservingIteration,
       missingAction : o.missingAction,
+      recursive : 32,
 
-      onSelector : resolver._onSelector,
+      onSelectorReplicate : resolver._onSelector,
       onSelectorDown : resolver._onSelectorDown,
       onUpBegin : resolver._onUpBegin,
       onUpEnd : resolver._onUpEnd,
