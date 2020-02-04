@@ -322,7 +322,7 @@ function selectorNormalize( src )
 // iterator methods
 // --
 
-function _onSelector( selector )
+function _onSelectorReplicate( selector )
 {
   let it = this;
   let rop = it.selectMultipleOptions.iteratorExtension.resolveOptions;
@@ -335,6 +335,8 @@ function _onSelector( selector )
   {
     return resolver._onSelectorComposite.call( it, selector );
   }
+
+  debugger;
 
   if( rop.prefixlessAction === 'default' && !it.composite )
   {
@@ -377,7 +379,7 @@ function onSelectorComposite_functor( fop )
   _.assert( _.strsAreAll( fop.postfix ) );
   _.assert( _.routineIs( fop.onSelectorReplicate ) );
 
-  return function onSelectorComposite( selector )
+  return function onSelectorReplicateComposite( selector )
   {
     let it = this;
 
@@ -444,7 +446,7 @@ onSelectorComposite_functor.defaults =
 
 let _onSelectorComposite = onSelectorComposite_functor({ isStrippedSelector : 1 });
 
-// let _onSelectorComposite = _.selector.functor.onSelectorComposite({ isStrippedSelector : 1 });
+// let _onSelectorComposite = _.selector.functor.onSelectorReplicateComposite({ isStrippedSelector : 1 });
 // /* let _onSelectorDown = _.selector.functor.onSelectorDownComposite({}); */
 
 //
@@ -752,6 +754,7 @@ function _resourceMapSelect()
     it.src = it.iterator.src[ kind ];
     if( it.selector === '.' )
     it.src = { '.' : it.src }
+    it.iterable = null;
     it.srcChanged();
   }
   // else
@@ -781,6 +784,7 @@ function _functionStringsJoinUp()
   it.selector = 0;
 
   // sop.selectorChanged.call( it );
+  it.iterable = null;
   it.selectorChanged();
   it.srcChanged();
 
@@ -898,7 +902,7 @@ function resolve_body( o )
   _.assert( !!resolver._resolveAct );
   // _.assert( o.prefixlessAction === 'default' || o.defaultResourceKind === null, 'Prefixless action should be "default" if default resource is provided' );
 
-  debugger;
+  // debugger;
   let result = resolver._resolveAct( o );
 
   if( result === undefined )
@@ -991,6 +995,9 @@ function _resolveAct( o )
     if( o.iterationPreserve.isFunction === undefined )
     o.iterationPreserve.isFunction = null;
 
+    // if( o.selector === "path::out.*=1" )
+    // debugger;
+
     result = _.select
     ({
 
@@ -1000,7 +1007,7 @@ function _resolveAct( o )
       missingAction : o.missingAction,
       recursive : 32,
 
-      onSelectorReplicate : resolver._onSelector,
+      onSelectorReplicate : resolver._onSelectorReplicate,
       onSelectorDown : resolver._onSelectorDown,
       onUpBegin : resolver._onUpBegin,
       onUpEnd : resolver._onUpEnd,
@@ -1057,7 +1064,7 @@ let Extend =
 
   // handler
 
-  _onSelector,
+  _onSelectorReplicate,
   _onSelectorComposite,
   _onSelectorDown,
   _onUpBegin,
