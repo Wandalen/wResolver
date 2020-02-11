@@ -1,5 +1,5 @@
 
-var _ = require( '..' /* 'wresolver' */ );
+var _ = require( 'wresolver' );
 var src =
 {
   dir :
@@ -9,7 +9,7 @@ var src =
   val2 : 'here',
 }
 
-let resolved = _.resolver.resolve
+let resolved = _.resolver.resolveQualified
 ({
   src : src,
   selector : '{::dir/val1} from {::val2}!',

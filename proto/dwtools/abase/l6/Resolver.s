@@ -26,10 +26,10 @@ if( typeof module !== 'undefined' )
   _.include( 'wLooker' );
   _.include( 'wReplicator' );
 
-  if( typeof module !== 'undefined' && module !== null )
-  require( '../l5/Selector.s' )
+  // if( typeof module !== 'undefined' && module !== null )
+  // require( '../l5/Selector.s' )
 
-  // _.include( 'wSelector' );
+  _.include( 'wSelector' );
   _.include( 'wPathTools' );
 
 }
