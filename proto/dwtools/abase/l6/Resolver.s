@@ -1,376 +1,1261 @@
-( function _Resolver_s_( ) {
+( function _Resolver_s_() {
 
 'use strict';
 
+
 /**
- * Collection of routines to resolve complex data structures. It takes a complex data structure, traverses it and resolves all strings having inlined special substrings. Use the module to resolve your templates.
+ * Collection of routines to resolve complex data structures.
   @module Tools/base/Resolver
 */
 
 /**
- * @file Resolver.s.
+ * @file l6/Resolver.s.
  */
 
 /**
- * Collection of routines to resolve complex data structures.
- * @namespace Tools( module::Resolver )
- * @memberof module:Tools/base/Resolver
- */
-
-/* qqq implement please :
-
-- detect of recursion
-  for example :
-    path :
-      in : '.'
-      out : 'out'
-      export : '{path::export}/**'
-
-
+ * Collection of routines to resolve a sub-structure from a complex data structure.
+  @namespace Tools( module::Resolver )
+  @memberof module:Tools/base/Resolver
 */
 
 if( typeof module !== 'undefined' )
 {
 
   let _ = require( '../../Tools.s' );
+
   _.include( 'wLooker' );
-  _.include( 'wSelector' );
+  _.include( 'wReplicator' );
+
+  if( typeof module !== 'undefined' && module !== null )
+  require( '../l5/Selector.s' )
+
+  // _.include( 'wSelector' );
+  _.include( 'wPathTools' );
 
 }
 
 let _global = _global_;
 let _ = _global_.wTools;
-let Parent = _.Selector;
-let Self = _.Resolver = _.Resolver || Object.create( null );
+let Parent = _.Replicator;
+_.resolver = _.resolver || Object.create( null );
+_.resolver.functor = _.resolver.functor || Object.create( null );
+
+_.assert( !!_realGlobal_ );
 
 // --
-// parser
+// extend looker
 // --
 
-function strRequestParse( srcStr )
+// function reselectIt( o )
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 1 );
+//
+//   let it2 = it.iterationMake();
+//
+//   _.selector.selectSingleIt( it2, o ); /* xxx */
+//
+//   return it2;
+// }
+//
+// //
+//
+// function reselect( o )
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 1 );
+//
+//   let it2 = it.reselectIt( o );
+//
+//   return it2.dst;
+// }
+//
+// //
+//
+// function start()
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 0, 'Expects no arguments' );
+//   _.assert( Object.hasOwnProperty.call( it.iterator, 'selector' ) );
+//   _.assert( Object.hasOwnProperty.call( it, 'selector' ) );
+//   _.assert( _.intIs( it.iterator.selector ) || _.strIs( it.iterator.selector ) );
+//   _.assert( !!it.upToken );
+//   _.assert( it.iterationIs( it ) )
+//
+//   if( _.intIs( it.iterator.selector ) )
+//   it.iterator.selectorArray = [ it.iterator.selector ];
+//   else
+//   it.iterator.selectorArray = split( it.iterator.selector );
+//
+//   return it.look();
+//
+//   /* */
+//
+//   function split( selector )
+//   {
+//     let splits = _.strSplit
+//     ({
+//       src : selector,
+//       delimeter : it.upToken,
+//       preservingDelimeters : 0,
+//       preservingEmpty : 1,
+//       preservingQuoting : 0,
+//       stripping : 1,
+//     });
+//
+//     if( _.strBegins( selector, it.upToken ) )
+//     splits.splice( 0, 1 );
+//     if( _.strEnds( selector, it.upToken ) )
+//     splits.pop();
+//
+//     return splits;
+//   }
+//
+// }
+//
+// //
+//
+// function iterationReinit( selector )
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 1 );
+//   _.assert( _.strIs( selector ) );
+//
+//   _.assert( Self.iterationIs( it ), () => 'Expects iteration of ' + Self.constructor.name + ' but got ' + _.toStrShort( it ) );
+//   _.assert( _.strIs( it.iterator.selector ) );
+//   if( it.iterator.selector === undefined )
+//   it.iterator.selector = '';
+//   _.assert( _.strIs( it.iterator.selector ) );
+//   it.iterator.selector = it.iterator.selector + _.strsShortest( it.iterator.upToken ) + selector;
+//
+// }
+//
+// //
+//
+// function iterableEval()
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 0, 'Expects no arguments' );
+//   _.assert( _.boolIs( it.isTerminal ) );
+//
+//   if( it.isTerminal )
+//   {
+//     it.iterable = false;
+//     it.ascendAct = it._termianlAscend;
+//   }
+//   else if( it.isRelative )
+//   {
+//     debugger;
+//     it.iterable = 'relative';
+//     it.ascendAct = it._relativeAscend;
+//   }
+//   else if( it.isGlob )
+//   {
+//
+//     if( _.longLike( it.src ) )
+//     {
+//       it.iterable = 'long-like';
+//       it.ascendAct = it._longAscend;
+//     }
+//     else if( _.objectIs( it.src ) )
+//     {
+//       it.iterable = 'map-like';
+//       it.ascendAct = it._mapAscend;
+//     }
+//     else if( _.hashMapLike( it.src ) )
+//     {
+//       it.iterable = 'hash-map-like';
+//       it.ascendAct = it._hashMapAscend;
+//     }
+//     else if( _.setLike( it.src ) )
+//     {
+//       it.iterable = 'set-like';
+//       it.ascendAct = it._setAscend;
+//     }
+//     else
+//     {
+//       it.iterable = false;
+//       it.ascendAct = it._termianlAscend;
+//     }
+//
+//   }
+//   else
+//   {
+//     it.iterable = 'single';
+//     it.ascendAct = it._singleAscend;
+//   }
+//
+// }
+//
+// //
+//
+// function choose( e, k )
+// {
+//   let it = this;
+//
+//   let result = Parent.choose.call( it, ... arguments );
+//
+//   if( !it.fast )
+//   {
+//     it.absoluteLevel = it.absoluteLevel+1;
+//   }
+//
+//   return result;
+// }
+//
+// //
+//
+// function selectorChanged()
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 0, 'Expects no arguments' );
+//
+//   if( it.selector !== undefined )
+//   if( it.onSelectorUndecorate )
+//   {
+//     it.onSelectorUndecorate();
+//   }
+//
+//   it.isRelative = it.selector === it.downToken;
+//   it.isTerminal = it.selector === undefined || it.selector === '/';
+//
+//   if( it.globing )
+//   {
+//
+//     let isGlob;
+//     if( _.path && _.path.isGlob )
+//     isGlob = function( selector )
+//     {
+//       return _.path.isGlob( selector )
+//     }
+//     else
+//     isGlob = function isGlob( selector )
+//     {
+//       return _.strHas( selector, '*' );
+//     }
+//
+//     it.isGlob = it.selector ? isGlob( it.selector ) : false;
+//
+//   }
+//
+//   it.indexedAccessToMap();
+//
+// }
+//
+// //
+//
+// function indexedAccessToMap()
+// {
+//   let it = this;
+//
+//   if( it.selector !== undefined && !it.isRelative && !it.isGlob )
+//   if( it.usingIndexedAccessToMap && !isNaN( _.numberFromStr( it.selector ) ) )
+//   if( _.objectLike( it.src ) || _.hashMapLike( it.src ) )
+//   {
+//     let q = _.numberFromStr( it.selector );
+//     it.selector = _.mapKeys( it.src )[ q ];
+//     // if( it.selector === undefined )
+//     // return it.errDoesNotExistThrow();
+//   }
+//
+// }
+//
+// //
+//
+// function globParse()
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 0, 'Expects no arguments' );
+//   _.assert( it.globing );
+//
+//   let regexp = /(.*){?\*=(\d*)}?(.*)/;
+//   let match = it.selector.match( regexp );
+//   it.parsedResolver = it.parsedResolver || Object.create( null );
+//
+//   if( !match )
+//   {
+//     it.parsedResolver.glob = it.selector;
+//   }
+//   else
+//   {
+//     _.sure( _.strCount( it.selector, '=' ) <= 1, () => 'Does not support selector with several assertions, like ' + _.strQuote( it.selector ) );
+//     it.parsedResolver.glob = match[ 1 ] + '*' + match[ 3 ];
+//     if( match[ 2 ].length > 0 )
+//     {
+//       it.parsedResolver.limit = _.numberFromStr( match[ 2 ] );
+//       _.sure( !isNaN( it.parsedResolver.limit ) && it.parsedResolver.limit >= 0, () => 'Epects non-negative number after "=" in ' + _.strQuote( it.selector ) );
+//     }
+//   }
+//
+// }
+//
+// //
+//
+// function errNoDown()
+// {
+//   let it = this;
+//   let err = _.ErrorLooking
+//   (
+//     'Cant go down', _.strQuote( it.selector ),
+//     '\nbecause', _.strQuote( it.selector ), 'does not exist',
+//     '\nat', _.strQuote( it.path ),
+//     '\nin container\n', _.toStrShort( it.src )
+//   );
+//   return err;
+// }
+//
+// //
+//
+// function errNoDownThrow()
+// {
+//   let it = this;
+//   it.continue = false;
+//   if( it.missingAction === 'undefine' || it.missingAction === 'ignore' )
+//   {
+//     it.dst = undefined;
+//   }
+//   else
+//   {
+//     let err = it.errNoDown();
+//     it.dst = undefined;
+//     it.iterator.error = err;
+//     if( it.missingAction === 'throw' )
+//     throw err;
+//   }
+// }
+//
+// //
+//
+// function errCantSet()
+// {
+//   let it = this;
+//   let err = _.err
+//   (
+//     'Cant set', _.strQuote( it.key )
+//   );
+//   return err;
+// }
+//
+// //
+//
+// function errCantSetThrow()
+// {
+//   let it = this;
+//   throw it.errCantSet();
+// }
+//
+// //
+//
+// function errDoesNotExist()
+// {
+//   let it = this;
+//   let err = _.ErrorLooking
+//   (
+//     'Cant select', _.strQuote( it.selector ),
+//     '\nbecause', _.strQuote( it.selector ), 'does not exist',
+//     'at', _.strQuote( it.path ),
+//     '\nin container', _.toStrShort( it.src )
+//   );
+//   return err;
+// }
+//
+// //
+//
+// function errDoesNotExistThrow()
+// {
+//   let it = this;
+//   it.continue = false;
+//
+//   if( it.missingAction === 'undefine' || it.missingAction === 'ignore' )
+//   {
+//     it.dst = undefined;
+//   }
+//   else
+//   {
+//     debugger;
+//     let err = it.errDoesNotExist();
+//     it.dst = undefined;
+//     it.iterator.error = err;
+//     if( it.missingAction === 'throw' )
+//     {
+//       debugger;
+//       throw err;
+//     }
+//   }
+//
+// }
+//
+// //
+//
+// function visitUp()
+// {
+//   let it = this;
+//
+//   it.visitUpBegin();
+//
+//   if( it.onUpBegin )
+//   it.onUpBegin.call( it );
+//
+//   if( it.dstWritingDown )
+//   {
+//
+//     if( it.isTerminal )
+//     it.upTerminal();
+//     else if( it.isRelative )
+//     it.upRelative();
+//     else if( it.isGlob )
+//     it.upGlob();
+//     else
+//     it.upSingle();
+//
+//   }
+//
+//   if( it.onUpEnd )
+//   it.onUpEnd.call( it );
+//
+//   /* */
+//
+//   _.assert( it.visiting );
+//   _.assert( _.routineIs( it.onUp ) );
+//   let r = it.onUp.call( it, it.src, it.key, it );
+//   _.assert( r === undefined );
+//
+//   it.visitUpEnd()
+//
+// }
+//
+// //
+//
+// function visitUpBegin()
+// {
+//   let it = this;
+//
+//   it.ascending = true;
+//
+//   _.assert( it.visiting );
+//
+//   it.selector = it.selectorArray[ it.level ];
+//   it.selectorChanged();
+//
+//   it.dstWriteDown = function dstWriteDown( eit )
+//   {
+//     it.dst = eit.dst;
+//   }
+//
+//   return Parent.visitUpBegin.apply( it, ... arguments );
+// }
+//
+// //
+//
+// function upTerminal()
+// {
+//   let it = this;
+//
+//   it.dst = it.src;
+//
+// }
+//
+// //
+//
+// function upRelative()
+// {
+//   let it = this;
+//
+//   _.assert( it.isRelative === true );
+//
+// }
+//
+// //
+//
+// function upGlob()
+// {
+//   let it = this;
+//
+//   _.assert( it.globing );
+//
+//   /* !!! qqq : teach it to parse more than single "*=" */
+//
+//   if( it.globing )
+//   it.globParse();
+//
+//   if( it.globing )
+//   if( it.parsedResolver.glob !== '*' )
+//   {
+//     if( it.iterable )
+//     {
+//       it.src = _.path.globFilter
+//       ({
+//         src : it.src,
+//         selector : it.parsedResolver.glob,
+//         onEvaluate : ( e, k ) => k,
+//       });
+//       it.iterable = null;
+//       it.srcChanged();
+//     }
+//   }
+//
+//   if( it.iterable === 'long-like' )
+//   {
+//     it.dst = [];
+//     it.dstWriteDown = function( eit )
+//     {
+//       if( it.missingAction === 'ignore' && eit.dst === undefined )
+//       return;
+//       if( it.preservingIteration ) /* qqq : cover the option. seems it does not work in some cases */
+//       it.dst.push( eit );
+//       else
+//       it.dst.push( eit.dst );
+//     }
+//   }
+//   else if( it.iterable === 'map-like' )
+//   {
+//     it.dst = Object.create( null );
+//     it.dstWriteDown = function( eit )
+//     {
+//       if( it.missingAction === 'ignore' && eit.dst === undefined )
+//       return;
+//       if( it.preservingIteration )
+//       it.dst[ eit.key ] = eit;
+//       else
+//       it.dst[ eit.key ] = eit.dst;
+//     }
+//   }
+//   else /* qqq : not implemented for other structures, please implement */
+//   {
+//     it.errDoesNotExistThrow();
+//   }
+//
+// }
+//
+// //
+//
+// function upSingle()
+// {
+//   let it = this;
+// }
+//
+// //
+//
+// function visitDown()
+// {
+//   let it = this;
+//
+//   it.visitDownBegin();
+//
+//   if( it.onDownBegin )
+//   it.onDownBegin.call( it );
+//
+//   if( it.isTerminal )
+//   it.downTerminal();
+//   else if( it.isRelative )
+//   it.downRelative();
+//   else if( it.isGlob )
+//   it.downGlob();
+//   else
+//   it.downSingle();
+//
+//   it.downSet();
+//
+//   if( it.onDownEnd )
+//   it.onDownEnd.call( it );
+//
+//   /* */
+//
+//   _.assert( it.visiting );
+//   if( it.onDown )
+//   {
+//     let r = it.onDown.call( it, it.src, it.key, it );
+//     _.assert( r === undefined );
+//   }
+//
+//   it.visitDownEnd();
+//
+//   /* */
+//
+//   if( it.down )
+//   {
+//     _.assert( _.routineIs( it.down.dstWriteDown ) );
+//     if( it.dstWritingDown )
+//     it.down.dstWriteDown( it );
+//   }
+//
+// }
+//
+// //
+//
+// function downTerminal()
+// {
+//   let it = this;
+// }
+//
+// //
+//
+// function downRelative()
+// {
+//   let it = this;
+// }
+//
+// //
+//
+// function downGlob()
+// {
+//   let it = this;
+//
+//   if( !it.dstWritingDown )
+//   return;
+//
+//   if( it.parsedResolver.limit === undefined )
+//   return;
+//
+//   _.assert( it.globing );
+//
+//   let length = _.entityLength( it.dst );
+//   if( length !== it.parsedResolver.limit )
+//   {
+//     let currentResolver = it.selector;
+//     if( it.parsedResolver && it.parsedResolver.full )
+//     currentResolver = it.parsedResolver.full;
+//     debugger;
+//     let err = _.ErrorLooking
+//     (
+//       'Select constraint ' + _.strQuote( currentResolver ) + ' failed'
+//       + ', got ' + length + ' elements'
+//       + ' for selector ' + _.strQuote( it.selector )
+//       + '\nAt : ' + _.strQuote( it.path )
+//     );
+//     if( it.onQuantitativeFail )
+//     it.onQuantitativeFail.call( it, err );
+//     else
+//     throw err;
+//   }
+//
+// }
+//
+// //
+//
+// function downSingle()
+// {
+//   let it = this;
+// }
+//
+// //
+//
+// function downSet()
+// {
+//   let it = this;
+//
+//   if( it.setting && it.isTerminal )
+//   {
+//     /* qqq : implement and cover for all type of containers */
+//     if( it.down && !_.primitiveIs( it.down.src ) && it.key !== undefined )
+//     it.down.src[ it.key ] = it.set;
+//     else
+//     it.errCantSetThrow();
+//   }
+//
+// }
+//
+// //
+//
+// function _relativeAscend()
+// {
+//   let it = this;
+//   let counter = 0;
+//   let dit = it.down;
+//
+//   _.assert( arguments.length === 1 );
+//
+//   if( !dit )
+//   return it.errNoDownThrow();
+//
+//   while( dit.isRelative || dit.isTerminal || counter > 0 )
+//   {
+//     if( dit.selector === it.downToken )
+//     counter += 1;
+//     else if( dit.selector !== undefined )
+//     counter -= 1;
+//     dit = dit.down;
+//     if( !dit )
+//     return it.errNoDownThrow();
+//   }
+//
+//   _.assert( it.iterationIs( dit ) );
+//
+//   it.visitPop();
+//   dit.visitPop();
+//
+//   /* */
+//
+//   let nit = it.iterationMake();
+//   nit.choose( undefined, it.selector );
+//   nit.src = dit.src;
+//   nit.dst = undefined;
+//   nit.absoluteLevel -= 2;
+//
+//   nit.look();
+//
+//   return true;
+// }
+//
+// //
+//
+// function _singleAscend( src )
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 1 );
+//
+//   if( it.selector === 'C' )
+//   debugger;
+//
+//   let eit = it.iterationMake().choose( undefined, it.selector );
+//
+//   if( eit.src === undefined )
+//   {
+//     eit.errDoesNotExistThrow();
+//   }
+//
+//   eit.look();
+//
+// }
+
+// --
+// namespace
+// --
+
+// function selectSingle_pre( routine, args )
+// {
+//
+//   let o = args[ 0 ]
+//   if( args.length === 2 )
+//   {
+//     if( Self.iterationIs( args[ 0 ] ) )
+//     o = { it : args[ 0 ], selector : args[ 1 ] }
+//     else
+//     o = { src : args[ 0 ], selector : args[ 1 ] }
+//   }
+//
+//   _.routineOptionsPreservingUndefines( routine, o );
+//   _.assert( arguments.length === 2 );
+//   _.assert( args.length === 1 || args.length === 2 );
+//   _.assert( o.onUpBegin === null || _.routineIs( o.onUpBegin ) );
+//   _.assert( o.onDownBegin === null || _.routineIs( o.onDownBegin ) );
+//   _.assert( _.strIs( o.selector ) );
+//   _.assert( _.strIs( o.downToken ) );
+//   _.assert( _.longHas( [ 'undefine', 'ignore', 'throw', 'error' ], o.missingAction ), 'Unknown missing action', o.missingAction );
+//   _.assert( o.selectorArray === undefined );
+//
+//   if( o.it )
+//   {
+//     o.it.iterationReinit( o.selector );
+//
+//     _.assert( o.prevSelectIteration === null || o.prevSelectIteration === o.it );
+//     _.assert( o.src === null );
+//
+//     o.src = o.it.iterator.src;
+//     o.selector = o.it.iterator.selector;
+//     o.prevSelectIteration = o.it;
+//
+//   }
+//
+//   if( o.setting === null && o.set !== null )
+//   o.setting = 1;
+//
+//   let o2 = o;
+//   if( o2.Looker === null )
+//   o2.Looker = Self;
+//   let it = _.look.pre( selectSingleIt_body, [ o2 ] );
+//
+//   _.assert( Object.hasOwnProperty.call( it.iterator, 'selector' ) );
+//   _.assert( Object.hasOwnProperty.call( it, 'selector' ) );
+//   _.assert( o.it === it || o.it === null );
+//
+//   return it;
+// }
+//
+// //
+//
+// function selectSingleIt_body( it )
+// {
+//   _.assert( arguments.length === 1, 'Expects single argument' );
+//   _.assert( _.lookerIs( it.Looker ) );
+//   _.assert( it.looker === undefined );
+//   it.start();
+//   return it;
+// }
+//
+// var defaults = selectSingleIt_body.defaults = _.mapExtend( null, _.look.defaults );
+//
+// defaults.Looker = null;
+// defaults.it = null;
+// defaults.src = null;
+// defaults.selector = null;
+// defaults.missingAction = 'undefine';
+// defaults.preservingIteration = 0;
+// defaults.usingIndexedAccessToMap = 0;
+// defaults.globing = 1;
+// defaults.revisiting = 2;
+// defaults.absoluteLevel = 0;
+// defaults.upToken = '/';
+// defaults.downToken = '..';
+//
+// defaults.replicateIteration = null;
+// defaults.prevSelectIteration = null;
+//
+// defaults.visited = null;
+// defaults.selected = null;
+//
+// defaults.set = null;
+// defaults.setting = null;
+//
+// defaults.onUpBegin = null;
+// defaults.onUpEnd = null;
+// defaults.onDownBegin = null;
+// defaults.onDownEnd = null;
+// defaults.onQuantitativeFail = null;
+// defaults.onSelectorUndecorate = null;
+//
+// //
+//
+// /**
+//  * @summary Selects elements from source object( src ) using provided pattern( selector ).
+//  * @description Returns iterator with result of selection
+//  * @param {} src Source entity.
+//  * @param {String} selector Pattern that matches against elements in a entity.
+//  *
+//  * @example //select element with key 'a1'
+//  * let it = _.selectSingleIt( { a1 : 1, a2 : 2 }, 'a1' );
+//  * console.log( it.dst )//1
+//  *
+//  * @example //select any that starts with 'a'
+//  * let it = _.selectSingle( { a1 : 1, a2 : 2 }, 'a*' );
+//  * console.log( it.dst ) // { a1 : 1, a2 : 1 }
+//  *
+//  * @example //select with constraint, only one element should be selected
+//  * let it = _.selectSingle( { a1 : 1, a2 : 2 }, 'a*=1' );
+//  * console.log( it.error ) // error
+//  *
+//  * @example //select with constraint, two elements
+//  * let it = _.selectSingle( { a1 : 1, a2 : 2 }, 'a*=2' );
+//  * console.log( it.dst ) // { a1 : 1, a2 : 1 }
+//  *
+//  * @example //select inner element using path selector
+//  * let it = _.selectSingle( { a : { b : { c : 1 } } }, 'a/b' );
+//  * console.log( it.dst ) //{ c : 1 }
+//  *
+//  * @example //select value of each property with name 'x'
+//  * let it = _.selectSingle( { a : { x : 1 }, b : { x : 2 }, c : { x : 3 } }, '*\/x' );
+//  * console.log( it.dst ) //{a: 1, b: 2, c: 3}
+//  *
+//  * @example // select root
+//  * let it = _.selectSingle( { a : { b : { c : 1 } } }, '/' );
+//  * console.log( it.dst )
+//  *
+//  * @function selectSingleIt
+//  * @memberof module:Tools/base/Resolver.Tools( module::Resolver )
+// */
+//
+// let selectSingleIt = _.routineFromPreAndBody( selectSingle_pre, selectSingleIt_body );
+//
+// //
+//
+// function selectSingle_body( it )
+// {
+//   it.start();
+//   _.assert( arguments.length === 1, 'Expects single argument' );
+//   if( it.missingAction === 'error' && it.error )
+//   return it.error;
+//   _.assert( it.error === null );
+//   return it.dst;
+// }
+//
+// _.routineExtend( selectSingle_body, selectSingleIt );
+//
+// //
+//
+// /**
+//  * @summary Selects elements from source object( src ) using provided pattern( selector ).
+//  * @description Short-cur for {@link module:Tools/base/Resolver.Tools( module::Resolver ).selectSingle _.selectSingleIt }. Returns found element(s) instead of iterator.
+//  * @param {} src Source entity.
+//  * @param {String} selector Pattern that matches against elements in a entity.
+//  *
+//  * @example //select element with key 'a1'
+//  * _.selectSingle( { a1 : 1, a2 : 2 }, 'a1' ); // 1
+//  *
+//  * @example //select any that starts with 'a'
+//  * _.selectSingle( { a1 : 1, a2 : 2 }, 'a*' ); // { a1 : 1, a2 : 1 }
+//  *
+//  * @example //select with constraint, only one element should be selected
+//  * _.selectSingle( { a1 : 1, a2 : 2 }, 'a*=1' ); // error
+//  *
+//  * @example //select with constraint, two elements
+//  * _.selectSingle( { a1 : 1, a2 : 2 }, 'a*=2' ); // { a1 : 1, a2 : 1 }
+//  *
+//  * @example //select inner element using path selector
+//  * _.selectSingle( { a : { b : { c : 1 } } }, 'a/b' ); //{ c : 1 }
+//  *
+//  * @example //select value of each property with name 'x'
+//  * _.selectSingle( { a : { x : 1 }, b : { x : 2 }, c : { x : 3 } }, '*\/x' ); //{a: 1, b: 2, c: 3}
+//  *
+//  * @example // select root
+//  * _.selectSingle( { a : { b : { c : 1 } } }, '/' );
+//  *
+//  * @function selectSingle
+//  * @memberof module:Tools/base/Resolver.Tools( module::Resolver )
+// */
+//
+// let selectSingle = _.routineFromPreAndBody( selectSingle_pre, selectSingle_body );
+
+//
+
+function resolve_pre( routine, args )
 {
-  let resolver = this;
 
-  if( resolver._selectorIs( srcStr ) )
+  let o = args[ 0 ]
+  if( args.length === 2 )
   {
-    let left, right;
-    let splits = _.strSplit( srcStr );
+    if( Self.iterationIs( args[ 0 ] ) )
+    o = { it : args[ 0 ], selector : args[ 1 ] }
+    else
+    o = { src : args[ 0 ], selector : args[ 1 ] }
+  }
 
-    if( splits.length > 1 )
-    debugger;
+  _.routineOptionsPreservingUndefines( routine, o );
 
-    for( let s = splits.length - 1 ; s >= 0 ; s-- )
+  if( o.root === null )
+  o.root = o.src;
+
+  if( o.compositeSelecting )
+  {
+
+    if( o.onSelectorReplicate === onSelectorReplicate || o.onSelectorReplicate === null )
+    o.onSelectorReplicate = _.resolver.functor.onSelectorReplicateComposite();
+    if( o.onSelectorDown === null )
+    o.onSelectorDown = _.resolver.functor.onSelectorDownComposite();
+
+    _.assert( _.routineIs( o.onSelectorReplicate ) );
+    _.assert( _.routineIs( o.onSelectorDown ) );
+
+  }
+
+  return o;
+}
+
+//
+
+function resolve_body( o )
+{
+
+  _.assert( !o.recursive || !!o.onSelectorReplicate, () => 'For recursive selection onSelectorReplicate should be defined' );
+  _.assert( o.it === null || o.it.constructor === Self.constructor );
+
+  return multipleSelect( o.selector );
+
+  /* */
+
+  function multipleSelect( selector )
+  {
+    let o2 =
     {
-      let split = splits[ s ];
-      if( resolver._selectorIs( split ) )
-      {
-        left = splits.slice( 0, s+1 ).join( ' ' );
-        right = splits.slice( s+1 ).join( ' ' );
-      }
+      src : selector,
+      onUp,
+      onDown,
     }
-    let result = _.strRequestParse( right );
-    result.subject = left + result.subject;
-    result.subjects = [ result.subject ];
-    return result;
-  }
 
-  let result = _.strRequestParse( srcStr );
-  return result;
-}
+    o2.iterationPreserve = Object.create( null );
+    o2.iterationPreserve.composite = false;
+    o2.iterationPreserve.compositeRoot = null;
 
-//
+    o2.iteratorExtension = Object.create( null );
+    o2.iteratorExtension.selectMultipleOptions = o;
 
-function _selectorIs( selector )
-{
-  if( !_.strIs( selector ) )
-  return false;
-  if( !_.strHas( selector, '::' ) )
-  return false;
-  return true;
-}
+    let it = _.replicateIt( o2 );
 
-//
-
-function selectorIs( selector )
-{
-  if( _.arrayIs( selector ) )
-  {
-    for( let s = 0 ; s < selector.length ; s++ )
-    if( this.selectorIs( selector[ s ] ) )
-    return true;
-  }
-  return this._selectorIs( selector );
-}
-
-//
-
-function selectorIsComposite( selector )
-{
-
-  if( !this.selectorIs( selector ) )
-  return false;
-
-  if( _.arrayIs( selector ) )
-  {
-    for( let s = 0 ; s < selector.length ; s++ )
-    if( isComposite( selector[ s ] ) )
-    return true;
-  }
-  else
-  {
-    return isComposite( selector );
+    return it.dst;
   }
 
   /* */
 
-  function isComposite( selector )
+  function singleOptions()
   {
+    let it = this;
+    let single = _.mapExtend( null, o );
+    single.replicateIteration = it;
 
-    let splits = _.strSplitFast
-    ({
-      src : selector,
-      delimeter : [ '{', '}' ],
-    });
+    single.selector = null;
+    single.visited = null;
+    single.selected = false;
 
-    if( splits.length < 5 )
-    return false;
+    delete single.onSelectorUp;
+    delete single.onSelectorDown;
+    delete single.onSelectorReplicate;
+    delete single.recursive;
+    delete single.dst;
+    delete single.root;
+    delete single.compositeSelecting;
+    delete single.compositePrefix;
+    delete single.compositePostfix;
 
-    splits = _.strSplitsCoupledGroup({ splits : splits, prefix : '{', postfix : '}' });
+    _.assert( !single.it || single.it.constructor === Self.constructor );
 
-    if( !splits.some( ( split ) => _.arrayIs( split ) ) )
-    return false;
-
-    return true;
+    return single;
   }
 
-}
+  /* */
 
-//
-
-function _selectorShortSplit( selector )
-{
-  _.assert( !_.strHas( selector, '/' ) );
-  let result = _.strIsolateLeftOrNone( selector, '::' );
-  _.assert( result.length === 3 );
-  result[ 1 ] = result[ 1 ] || '';
-  return result;
-}
-
-//
-
-function selectorShortSplit( o )
-{
-  let result;
-
-  _.assertRoutineOptions( selectorShortSplit, o );
-  _.assert( arguments.length === 1 );
-  _.assert( !_.strHas( o.selector, '/' ) );
-  _.sure( _.strIs( o.selector ) || _.strsAreAll( o.selector ), 'Expects string, but got', _.strType( o.selector ) );
-
-  let splits = this._selectorShortSplit( o.selector );
-
-  if( !splits[ 0 ] && o.defaultResourceKind )
+  function selectSingle( visited )
   {
-    splits = [ o.defaultResourceKind, '::', o.selector ];
+    let it = this;
+
+    _.assert( _.strIs( it.src ) );
+    _.assert( arguments.length === 1 );
+
+    let op = singleOptions.call( it );
+    op.selector = it.src;
+    op.visited = visited;
+    op.selected = false;
+
+    if( _.longHas( visited, op.selector ) )
+    return op;
+
+    _.assert( _.strIs( op.selector ) );
+    _.assert( !_.longHas( visited, op.selector ), () => `Loop selecting ${op.selector}` );
+
+    visited.push( op.selector );
+
+    _.assert( _.strIs( op.selector ) );
+
+    op.result = _.selectSingle( op );
+    op.selected = true;
+
+    return op;
   }
 
-  return splits;
-}
+  /* */
 
-var defaults = selectorShortSplit.defaults = Object.create( null )
-defaults.selector = null
-defaults.defaultResourceKind = null;
-
-//
-
-function selectorLongSplit( o )
-{
-  let result = [];
-
-  if( _.strIs( o ) )
-  o = { selector : o }
-
-  _.routineOptions( selectorLongSplit, o );
-  _.assert( arguments.length === 1 );
-  _.sure( _.strIs( o.selector ) || _.strsAreAll( o.selector ), 'Expects string, but got', _.strType( o.selector ) );
-
-  let selectors = o.selector.split( '/' );
-
-  selectors.forEach( ( selector ) =>
+  function onUp()
   {
-    let o2 = _.mapExtend( null, o );
-    o2.selector = selector;
-    result.push( this.selectorShortSplit( o2 ) );
-  });
+    let it = this;
+    let selector
+    let visited = [];
+    let counter = 0;
 
-  return result;
-}
+    // if( o.selector === 'path::out.debug' )
+    // debugger;
+    // if( o.selector === 'out.debug' )
+    // debugger;
+    // if( _.longIs( o.selector ) )
+    // if( _.longIs( it.src ) )
+    // debugger;
 
-var defaults = selectorLongSplit.defaults = Object.create( null )
-defaults.selector = null
-defaults.defaultResourceKind = null;
+    selector = o.onSelectorReplicate.call( it, { selector : it.src, counter } );
 
-//
-
-function selectorParse( o )
-{
-  let resolver = this;
-  let result = [];
-
-  if( _.strIs( o ) )
-  o = { selector : o }
-
-  _.routineOptions( selectorParse, o );
-  _.assert( arguments.length === 1 );
-  _.sure( _.strIs( o.selector ) || _.strsAreAll( o.selector ), 'Expects string, but got', _.strType( o.selector ) );
-
-  let splits = _.strSplitFast
-  ({
-    src : o.selector,
-    delimeter : [ '{', '}' ],
-  });
-
-  splits = _.strSplitsCoupledGroup({ splits : splits, prefix : '{', postfix : '}' });
-
-  if( splits[ 0 ] === '' )
-  splits.splice( 0, 1 );
-  if( splits[ splits.length-1 ] === '' )
-  splits.splice( splits.length-1, 1 );
-
-  splits = splits.map( ( split ) =>
-  {
-    if( !_.arrayIs( split ) )
-    return split;
-    _.assert( split.length === 3 )
-    if( !this.selectorIs( split[ 1 ] ) )
-    return split.join( '' );
-
-    let o2 = _.mapExtend( null, o );
-    o2.selector = split[ 1 ];
-    return this.selectorLongSplit( o2 );
-  });
-
-  splits = _.strSplitsUngroupedJoin( splits );
-
-  if( splits.length === 1 && _.strIs( splits[ 0 ] ) && resolver.selectorIs( splits[ 0 ] ) )
-  {
-    let o2 = _.mapExtend( null, o );
-    o2.selector = splits[ 0 ];
-    splits[ 0 ] = resolver.selectorLongSplit( o2 );
-  }
-
-  return splits;
-}
-
-var defaults = selectorParse.defaults = Object.create( null )
-defaults.selector = null
-defaults.defaultResourceKind = null;
-
-//
-
-function selectorStr( parsedSelector )
-{
-  let resolver = this;
-
-  if( _.strIs( parsedSelector ) )
-  return parsedSelector;
-
-  let result = '';
-
-  for( let i = 0 ; i < parsedSelector.length ; i++ )
-  {
-    let inline = parsedSelector[ i ];
-    if( _.strIs( inline ) )
+    do
     {
-      result += inline;
-    }
-    else
-    {
-      _.arrayIs( inline )
-      result += '{';
-      for( let s = 0 ; s < inline.length ; s++ )
+
+      if( _.strIs( selector ) )
       {
-        let split = inline[ s ];
-        _.assert( _.arrayIs( split ) && split.length === 3 );
-        if( s > 0 )
-        result += '/';
-        result += split.join( '' );
+        {
+          it.src = selector;
+          it.iterable = null;
+          it.srcChanged();
+          let single = selectSingle.call( it, visited );
+          selector = undefined;
+          if( single.result !== undefined && o.recursive && visited.length <= o.recursive )
+          {
+            counter += 1;
+            selector = o.onSelectorReplicate.call( it, { selector : single.result, counter } );
+            if( selector === undefined )
+            {
+              if( single.selected )
+              it.dst = single.result;
+              it.continue = false;
+              it.dstSetting = false;
+            }
+          }
+          else
+          {
+            if( single.selected )
+            it.dst = single.result;
+            it.continue = false;
+            it.dstSetting = false;
+          }
+        }
       }
-      result += '}';
+      else if( selector !== undefined )
+      {
+        if( selector && selector.composite === _.resolver.composite )
+        {
+          if( !it.compositeRoot )
+          it.compositeRoot = it;
+          it.composite = true;
+        }
+        it.src = selector;
+        it.iterable = null;
+        it.srcChanged();
+        selector = undefined;
+      }
+
     }
+    while( selector !== undefined );
+
+    if( o.onSelectorUp )
+    o.onSelectorUp.call( it, o );
   }
 
-  return result;
+  /* */
+
+  function onDown()
+  {
+    let it = this;
+    if( o.onSelectorDown )
+    o.onSelectorDown.call( it, o );
+  }
+
+  /* */
+
 }
+
+_.routineExtend( resolve_body, _.selector.selectSingle.body );
+
+var defaults = resolve_body.defaults;
+defaults.root = null;
+defaults.onSelectorUp = null;
+defaults.onSelectorDown = null;
+defaults.onSelectorReplicate = onSelectorReplicate;
+defaults.onSelectorUndecorate = _.selector.onSelectorUndecorate;
+defaults.recursive = 0;
+defaults.compositeSelecting = 0;
+
+_.assert( _.routineIs( defaults.onSelectorUndecorate ) );
 
 //
 
-function selectorNormalize( src )
-{
-  let resolver = this;
+/**
+ * @summary Selects elements from source object( src ) using provided pattern( selector ).
+ * @param {} src Source entity.
+ * @param {String} selector Pattern that matches against elements in a entity.
+ *
+ * @example //resolve element with key 'a1'
+ * _.resolve( { a1 : 1, a2 : 2 }, 'a1' ); // 1
+ *
+ * @example //resolve any that starts with 'a'
+ * _.resolve( { a1 : 1, a2 : 2 }, 'a*' ); // { a1 : 1, a2 : 1 }
+ *
+ * @example //resolve with constraint, only one element should be selected
+ * _.resolve( { a1 : 1, a2 : 2 }, 'a*=1' ); // error
+ *
+ * @example //resolve with constraint, two elements
+ * _.resolve( { a1 : 1, a2 : 2 }, 'a*=2' ); // { a1 : 1, a2 : 1 }
+ *
+ * @example //resolve inner element using path selector
+ * _.resolve( { a : { b : { c : 1 } } }, 'a/b' ); //{ c : 1 }
+ *
+ * @example //resolve value of each property with name 'x'
+ * _.resolve( { a : { x : 1 }, b : { x : 2 }, c : { x : 3 } }, '*\/x' ); //{a: 1, b: 2, c: 3}
+ *
+ * @example // resolve root
+ * _.resolve( { a : { b : { c : 1 } } }, '/' );
+ *
+ * @function resolve
+ * @memberof module:Tools/base/Resolver.Tools( module::Resolver )
+*/
 
-  if( !resolver.selectorIs( src ) )
-  return src;
+let resolve = _.routineFromPreAndBody( resolve_pre, resolve_body );
 
-  let parsed = resolver.selectorParse( src );
-  let result = resolver.selectorStr( parsed );
+// //
+//
+// /**
+//  * @summary Short-cut for {@link module:Tools/base/Resolver.Tools( module::Resolver ).selectSingle _.selectSingle }. Sets value of element selected by pattern ( o.selector ).
+//  * @param {Object} o Options map
+//  * @param {} o.src Source entity
+//  * @param {String} o.selector Pattern to select element(s).
+//  * @param {} o.set=null Entity to set.
+//  * @param {Boolean} o.setting=1 Allows to set value for a property or create a new property if needed.
+//  *
+//  * @example
+//  * let src = {};
+//    _.selectSet({ src, selector : 'a', set : 1 });
+//    console.log( src.a ); //1
+//  *
+//  * @function selectSet
+//  * @memberof module:Tools/base/Resolver.Tools( module::Resolver )
+// */
+//
+// let selectSet = _.routineFromPreAndBody( selectSingle.pre, selectSingle.body );
+//
+// var defaults = selectSet.defaults;
+// defaults.set = null;
+// defaults.setting = 1;
+//
+// //
+//
+// /**
+//  * @summary Short-cut for {@link module:Tools/base/Resolver.Tools( module::Resolver ).selectSingle _.selectSingle }. Returns only unique elements.
+//  * @param {} src Source entity.
+//  * @param {String} selector Pattern that matches against elements in a entity.
+//  *
+//  * @function select
+//  * @memberof module:Tools/base/Resolver.Tools( module::Resolver )
+// */
+//
+// function selectUnique_body( o )
+// {
+//   _.assert( arguments.length === 1 );
+//
+//   let selected = _.selectSingle.body( o );
+//
+//   let result = _.replicate({ src : selected, onUp });
+//
+//   return result;
+//
+//   function onUp( e, k, it )
+//   {
+//     if( _.longLike( it.src ) )
+//     {
+//       // if( _.arrayIs( it.src ) )
+//       it.src = _.longOnce( it.src );
+//       // else
+//       // it.src = _.longOnce( null, it.src ); /* xxx : uncomment later */
+//     }
+//   }
+//
+// }
+//
+// _.routineExtend( selectUnique_body, selectSingle.body );
+//
+// let selectUnique = _.routineFromPreAndBody( selectSingle.pre, selectUnique_body );
 
-  return result;
-}
+//
 
-// --
-// iterator methods
-// --
-
-function _onSelectorReplicate( selector )
+function onSelectorReplicate( o )
 {
   let it = this;
-  let rop = it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !_.strIs( selector ) )
-  return;
-
-  if( resolver._selectorIs( selector ) )
-  {
-    return resolver._onSelectorComposite.call( it, selector );
-  }
-
-  debugger;
-
-  if( rop.prefixlessAction === 'default' && !it.composite )
-  {
-    return selector;
-  }
-  else if( rop.prefixlessAction === 'resolved' || rop.prefixlessAction === 'default' )
-  {
-    return;
-  }
-  else if( rop.prefixlessAction === 'throw' || rop.prefixlessAction === 'error' )
-  {
-    debugger;
-    it.iterator.continue = false;
-    let err = resolver.errResolving
-    ({
-      selector,
-      rop,
-      err : _.ErrorLooking( 'Resource selector should have prefix' ),
-    });
-    if( rop.prefixlessAction === 'throw' )
-    throw err;
-    it.dst = err;
-    return;
-  }
-  else _.assert( 0 );
-
+  if( _.strIs( o.selector ) )
+  return o.selector;
 }
 
 //
+//
+// function onSelectorUndecorate()
+// {
+//   let it = this;
+//   _.assert( _.strIs( it.selector ) || _.numberIs( it.selector ) );
+// }
 
-function onSelectorComposite_functor( fop )
+//
+
+function onSelectorReplicateComposite( fop )
 {
 
-  fop = _.routineOptions( onSelectorComposite_functor, arguments );
+  fop = _.routineOptions( onSelectorReplicateComposite, arguments );
   fop.prefix = _.arrayAs( fop.prefix );
   fop.postfix = _.arrayAs( fop.postfix );
   fop.onSelectorReplicate = fop.onSelectorReplicate || onSelectorReplicate;
@@ -379,9 +1264,10 @@ function onSelectorComposite_functor( fop )
   _.assert( _.strsAreAll( fop.postfix ) );
   _.assert( _.routineIs( fop.onSelectorReplicate ) );
 
-  return function onSelectorReplicateComposite( selector )
+  return function onSelectorReplicateComposite( o )
   {
     let it = this;
+    let selector = o.selector;
 
     if( !_.strIs( selector ) )
     return;
@@ -400,14 +1286,16 @@ function onSelectorComposite_functor( fop )
     if( selector2.length < 3 )
     {
       if( fop.isStrippedSelector )
-      return fop.onSelectorReplicate.call( it, selector );
+      return fop.onSelectorReplicate.call( it, o );
       else
       return;
     }
 
     if( selector2.length === 3 )
     if( _.strsEquivalentAny( fop.prefix, selector2[ 0 ] ) && _.strsEquivalentAny( fop.postfix, selector2[ 2 ] ) )
-    return fop.onSelectorReplicate.call( it, selector2[ 1 ] );
+    {
+      return fop.onSelectorReplicate.call( it, _.mapExtend( null, o, { selector : selector2[ 1 ] } ) );
+    }
 
     selector2 = _.strSplitsCoupledGroup({ splits : selector2, prefix : '{', postfix : '}' });
 
@@ -416,692 +1304,204 @@ function onSelectorComposite_functor( fop )
     {
       if( !_.arrayIs( split ) )
       return split;
-      _.assert( split.length === 3 )
-      if( fop.onSelectorReplicate.call( it, split[ 1 ] ) === undefined )
-      return split.join( '' );
+
+      _.assert( split.length === 3 );
+
+      let split1 = fop.onSelectorReplicate.call( it, _.mapExtend( null, o, { selector : split[ 1 ] } ) );
+      if( split1 === undefined )
+      {
+        return split.join( '' );
+      }
       else
-      return split;
+      {
+        if( fop.rewrapping )
+        return split[ 0 ] + split1 + split[ 2 ];
+        else
+        return split;
+      }
     });
 
     selector2 = selector2.map( ( split ) => _.arrayIs( split ) ? split.join( '' ) : split );
-    selector2.composite = _.select.composite;
+    selector2.composite = _.resolver.composite;
 
     return selector2;
   }
 
-  function onSelectorReplicate( selector )
+  function onSelectorReplicate( o )
   {
-    return selector;
+    return o.selector;
   }
 
 }
 
-onSelectorComposite_functor.defaults =
+onSelectorReplicateComposite.defaults =
 {
   prefix : '{',
   postfix : '}',
   onSelectorReplicate : null,
-  isStrippedSelector : 0,
+  isStrippedSelector : 0, /* treat selector beyond affixes like "pre::c/c2" as selector */
+  rewrapping : 1,
 }
-
-let _onSelectorComposite = onSelectorComposite_functor({ isStrippedSelector : 1 });
-
-// let _onSelectorComposite = _.selector.functor.onSelectorReplicateComposite({ isStrippedSelector : 1 });
-// /* let _onSelectorDown = _.selector.functor.onSelectorDownComposite({}); */
 
 //
 
-function _onSelectorDown()
+function onSelectorDownComposite( fop )
 {
-  let it = this;
-  let rop = it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  resolver._arrayFlatten.call( it );
-
-  // resolver._functionStringsJoinDown.call( it );
-
-  if( it.continue && _.arrayIs( it.dst ) && it.src.composite === _.select.composite )
+  return function onSelectorDownComposite()
   {
-
-    for( let d = 0 ; d < it.dst.length ; d++ )
-    if( _.errIs( it.dst[ d ] ) )
-    throw it.dst[ d ];
-
-    it.dst = _.strJoin( it.dst );
-
-  }
-
-}
-
-//
-
-function _onUpBegin()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-  let doing = true;
-
-  if( _global_.debugger )
-  debugger;
-
-  if( !it.dstWritingDown )
-  return;
-
-  resolver._queryParse.call( it );
-  resolver._resourceMapSelect.call( it );
-
-  let recursing = _.strIs( it.dst ) && resolver._selectorIs( it.dst );
-  if( recursing )
-  {
-
-    let o2 = _.mapOnly( it, resolver.resolve.defaults );
-    o2.selector = it.dst;
-    o2.src = it.iterator.src;
-    it.src = resolver.resolve( o2 );
-
-  }
-
-}
-
-//
-
-function _onUpEnd()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !it.dstWritingDown )
-  return;
-
-}
-
-//
-
-function _onDownEnd()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !it.dstWritingDown )
-  return;
-
-  if( _.arrayIs( it.src ) && it.src[ functionSymbol ] )
-  {
-    debugger;
-    _global_.debugger = 1;
-  }
-
-  resolver._functionStringsJoinDown.call( it );
-
-  resolver._mapsFlatten.call( it );
-  resolver._mapValsUnwrap.call( it );
-  resolver._arrayFlatten.call( it );
-  resolver._singleUnwrap.call( it );
-
-}
-
-//
-
-function _onQuantitativeFail( err )
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  debugger;
-
-  let result = it.dst;
-  if( _.mapIs( result ) )
-  result = _.mapVals( result );
-  if( _.arrayIs( result ) )
-  {
-    let isString = 1;
-    if( result.every( ( e ) => _.strIs( e ) ) )
-    isString = 1;
-    else
-    result = result.map( ( e ) =>
+    let it = this;
+    if( it.continue && _.arrayIs( it.dst ) && it.src.composite === _.resolver.composite )
     {
-      if( _.strIs( e ) )
-      return e;
-      if( _.strIs( e.qualifiedName ) )
-      return e.qualifiedName;
-      isString = 0
-    });
-
-    if( isString )
-    if( result.length )
-    err = _.err( err, '\n', 'Found : ' + result.join( ', ' ) );
-    else
-    err = _.err( err, '\n', 'Found nothing' );
+      it.dst = _.strJoin( it.dst );
+    }
   }
-
-  throw err;
-}
-
-//
-
-function _arrayFlatten()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-  let currentModule = it.currentModule;
-
-  _.assert( _.mapIs( rop ) );
-
-  if( !rop.arrayFlattening || !_.arrayIs( it.dst ) )
-  return;
-
-  it.dst = _.arrayFlattenDefined( it.dst );
-
-}
-
-//
-
-function _arrayWrap( result )
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !rop.arrayWrapping )
-  return;
-
-  if( !_.mapIs( it.dst ) )
-  it.dst = _.arrayAs( it.dst );
-
-}
-
-//
-
-function _mapsFlatten()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !rop.mapFlattening || !_.mapIs( it.dst ) )
-  return;
-
-  it.dst = _.mapsFlatten([ it.dst ]);
-
-}
-
-//
-
-function _mapValsUnwrap()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !rop.mapValsUnwrapping )
-  return;
-  if( !_.mapIs( it.dst ) )
-  return;
-  if( !_.all( it.dst, ( e ) => _.instanceIs( e ) || _.primitiveIs( e ) ) )
-  return;
-
-  it.dst = _.mapVals( it.dst );
 }
 
 // //
 //
-// function _mapValsUnwrap2( result )
+// function onSelectorUndecorateDoubleColon()
 // {
-//   if( !o.mapValsUnwrapping )
-//   return result
-//   if( !_.mapIs( result ) )
-//   return result;
-//   if( !_.all( result, ( e ) => _.instanceIs( e ) || _.primitiveIs( e ) ) )
-//   return result;
-//   return _.mapVals( result );
+//   return function onSelectorUndecorateDoubleColon()
+//   {
+//     let it = this;
+//     if( !_.strIs( it.selector ) )
+//     return;
+//     if( !_.strHas( it.selector, '::' ) )
+//     return;
+//     it.selector = _.strIsolateRightOrAll( it.selector, '::' )[ 2 ];
+//   }
 // }
 
-//
-
-function _singleUnwrap()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !rop.singleUnwrapping )
-  return;
-
-  if( _.any( it.dst, ( e ) => _.mapIs( e ) || _.arrayIs( e ) ) )
-  return;
-
-  if( _.mapIs( it.dst ) )
-  {
-    if( _.mapKeys( it.dst ).length === 1 )
-    it.dst = _.mapVals( it.dst )[ 0 ];
-  }
-  else if( _.arrayIs( it.dst ) )
-  {
-    if( it.dst.length === 1 )
-    it.dst = it.dst[ 0 ];
-  }
-
-}
-
-//
-
-function _queryParse()
-{
-  let it = this;
-  let rop = it.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( !it.selector )
-  return;
-
-  let splits = resolver.selectorShortSplit
-  ({
-    selector : it.selector,
-    defaultResourceKind : rop.defaultResourceKind,
-  });
-
-  it.parsedSelector = Object.create( null );
-  it.parsedSelector.kind = splits[ 0 ];
-
-  if( !it.parsedSelector.kind )
-  {
-    if( splits[ 1 ] !== undefined )
-    it.parsedSelector.kind = null;
-  }
-
-  it.parsedSelector.full = splits.join( '' );
-  it.selector = it.parsedSelector.name = splits[ 2 ];
-
-}
-
-//
-
-function _resourceMapSelect()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  let resolver = rop.Resolver;
-
-  if( it.selector === undefined || it.selector === null )
-  return;
-
-  let kind = it.parsedSelector.kind;
-  if( kind === '' || kind === null )
-  {
-    // debugger;
-  }
-  else if( kind === 'f' )
-  {
-
-    debugger;
-    it.isFunction = it.selector;
-    if( it.selector === 'strings.join' )
-    {
-      resolver._functionStringsJoinUp.call( it );
-    }
-    else _.sure( 0, 'Unknown function', it.parsedSelector.full );
-
-  }
-  else
-  {
-    let root = it.root || it;
-    it.src = it.iterator.src[ kind ];
-    if( it.selector === '.' )
-    it.src = { '.' : it.src }
-    it.iterable = null;
-    it.srcChanged();
-  }
-  // else
-  // {
-  //   debugger;
-  //   throw _.ErrorLooking( 'Unknown kind of resource', _.strQuote( it.parsedSelector.full ) );
-  // }
-
-}
-
 // --
-// function
+// declare looker
 // --
 
-function _functionStringsJoinUp()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-  // let sop = it.selectOptions; // xxx
+let Resolver = Object.create( Parent );
 
-  _.sure( !!it.down, () => it.parsedSelector.full + ' expects context to join it' );
-
-  it.src = [ it.src ];
-  it.src[ functionSymbol ] = it.selector;
-
-  it.isFunction = it.selector;
-  it.selector = 0;
-
-  // sop.selectorChanged.call( it );
-  it.iterable = null;
-  it.selectorChanged();
-  it.srcChanged();
-
-}
-
+// Resolver.constructor = function Resolver(){};
+// Resolver.Looker = Resolver;
+// Resolver.reselectIt = reselectIt;
+// Resolver.reselect = reselect;
+// Resolver.start = start;
+// Resolver.iterationReinit = iterationReinit;
+// Resolver.iterableEval = iterableEval;
+// Resolver.choose = choose;
+// Resolver.selectorChanged = selectorChanged;
+// Resolver.indexedAccessToMap = indexedAccessToMap;
+// Resolver.globParse = globParse;
 //
-
-function _functionStringsJoinDown()
-{
-  let it = this;
-  let rop = it.resolveOptions ? it.resolveOptions : it.selectMultipleOptions.iteratorExtension.resolveOptions;
-
-  if( !_.arrayIs( it.src ) || !it.src[ functionSymbol ] )
-  return;
-
-  debugger;
-  if( _.arrayIs( it.dst ) && it.dst.every( ( e ) => _.arrayIs( e ) ) )
-  {
-    it.dst = it.dst.map( ( e ) => e.join( ' ' ) );
-  }
-  else
-  {
-    _.assert( _.routineIs( it.dst.join ) );
-    it.dst = it.dst.join( ' ' );
-  }
-
-}
-
-// --
-// err
-// --
-
-function errResolving( o )
-{
-  let resolver = this;
-  _.assertRoutineOptions( errResolving, arguments );
-  _.assert( arguments.length === 1 );
-  debugger;
-  return _.err( 'Failed to resolve', _.color.strFormat( o.selector, 'path' ), '\n', o.err );
-}
-
-errResolving.defaults =
-{
-  selector : null,
-  rop : null,
-  err : null,
-}
-
+// Resolver.errNoDown = errNoDown;
+// Resolver.errNoDownThrow = errNoDownThrow;
+// Resolver.errCantSet = errCantSet;
+// Resolver.errCantSetThrow = errCantSetThrow;
+// Resolver.errDoesNotExist = errDoesNotExist;
+// Resolver.errDoesNotExistThrow = errDoesNotExistThrow;
 //
-
-function errResolvingThrow( o )
-{
-  let resolver = this;
-  _.assertRoutineOptions( errResolvingThrow, arguments );
-  _.assert( arguments.length === 1 );
-  if( o.missingAction === 'undefine' )
-  return;
-
-  debugger;
-
-  let err = resolver.errResolving
-  ({
-    selector : o.selector,
-    rop : o.rop,
-    err : o.err,
-  });
-
-  if( o.missingAction === 'throw' )
-  throw err;
-  else
-  return err;
-
-}
-
-errResolvingThrow.defaults =
-{
-  missingAction : null,
-  selector : null,
-  rop : null,
-  err : null,
-}
-
-// --
-// resolve
-// --
-
-function resolve_pre( routine, args )
-{
-  let o = args[ 0 ];
-
-  _.routineOptions( routine, args );
-
-  if( o.visited === null )
-  o.visited = [];
-
-  if( o.Resolver === null )
-  o.Resolver = Self;
-
-  _.assert( arguments.length === 2 );
-  _.assert( args.length === 1 );
-  _.assert( _.longHas( [ 'undefine', 'throw', 'error' ], o.missingAction ), 'Unknown value of option missing action', o.missingAction );
-  _.assert( _.longHas( [ 'default', 'resolved', 'throw', 'error' ], o.prefixlessAction ), 'Unknown value of option prefixless action', o.prefixlessAction );
-  _.assert( _.arrayIs( o.visited ) );
-  _.assert( !o.defaultResourceKind || !_.strHas( o.defaultResourceKind, '*' ), () => 'Expects non glob {-defaultResourceKind-}, but got ' + _.strQuote( o.defaultResourceKind ) );
-
-  return o;
-}
-
+// Resolver.visitUp = visitUp;
+// Resolver.visitUpBegin = visitUpBegin;
+// Resolver.upTerminal = upTerminal;
+// Resolver.upRelative = upRelative;
+// Resolver.upGlob = upGlob;
+// Resolver.upSingle = upSingle;
 //
-
-function resolve_body( o )
-{
-  let resolver = this;
-
-  _.assert( !!resolver._resolveAct );
-  // _.assert( o.prefixlessAction === 'default' || o.defaultResourceKind === null, 'Prefixless action should be "default" if default resource is provided' );
-
-  // debugger;
-  let result = resolver._resolveAct( o );
-
-  if( result === undefined )
-  {
-    result = resolver.errResolving
-    ({
-      selector : o.selector,
-      rop : o,
-      err : _.ErrorLooking( o.selector, 'was not found' ),
-    })
-  }
-
-  if( _.errIs( result ) )
-  {
-    return resolver.errResolvingThrow
-    ({
-      missingAction : o.missingAction,
-      selector : o.selector,
-      rop : o,
-      err : result,
-    });
-
-  }
-
-  let it =
-  {
-    dst : result,
-    resolveOptions : o,
-  }
-
-  resolver._mapsFlatten.call( it );
-  resolver._mapValsUnwrap.call( it );
-  resolver._singleUnwrap.call( it );
-  resolver._arrayWrap.call( it );
-
-  return it.dst;
-}
-
-resolve_body.defaults =
-{
-
-  src : null,
-  selector : null,
-  defaultResourceKind : null,
-  prefixlessAction : 'resolved',
-  missingAction : 'throw',
-  visited : null,
-  singleUnwrapping : 1,
-  mapValsUnwrapping : 1,
-  mapFlattening : 1,
-  arrayWrapping : 0,
-  arrayFlattening : 1,
-  preservingIteration : 0,
-  Resolver : null,
-
-  iteratorExtension : null,
-  iterationExtension : null,
-  iterationPreserve : null,
-
-}
-
-let resolve = _.routineFromPreAndBody( resolve_pre, resolve_body );
-let resolveMaybe = _.routineFromPreAndBody( resolve_pre, resolve_body );
-
-var defaults = resolveMaybe.defaults;
-defaults.missingAction = 'undefine';
-
+// Resolver.visitDown = visitDown;
+// Resolver.downTerminal = downTerminal;
+// Resolver.downRelative = downRelative;
+// Resolver.downGlob = downGlob;
+// Resolver.downSingle = downSingle;
+// Resolver.downSet = downSet;
 //
+// Resolver._relativeAscend = _relativeAscend;
+// Resolver._singleAscend = _singleAscend;
 
-function _resolveAct( o )
-{
-  let resolver = this;
-  let result;
+let Iterator = Resolver.Iterator = _.mapExtend( null, Resolver.Iterator );
 
-  _.assert( arguments.length === 1 );
-  _.assert( _.arrayIs( o.visited ) );
+// Iterator.selectorArray = null;
+// Iterator.replicateIteration = null;
 
-  /* */
+let Iteration = Resolver.Iteration = _.mapExtend( null, Resolver.Iteration );
 
-  try
-  {
+// Iteration.dst = null;
+// Iteration.selector = null;
+// Iteration.absoluteLevel = 0;
+// Iteration.parsedResolver = null;
+// Iteration.isRelative = null;
+// Iteration.isGlob = null;
+// Iteration.isTerminal = null;
+// Iteration.dstWritingDown = true;
+// Iteration.dstWriteDown = null;
 
-    o.iteratorExtension = o.iteratorExtension || Object.create( null );
-    if( o.iteratorExtension.isFunction === undefined )
-    o.iteratorExtension.resolveOptions = o;
-
-    o.iterationExtension = o.iterationExtension || Object.create( null );
-
-    o.iterationPreserve = o.iterationPreserve || Object.create( null );
-    if( o.iterationPreserve.isFunction === undefined )
-    o.iterationPreserve.isFunction = null;
-
-    // if( o.selector === "path::out.*=1" )
-    // debugger;
-
-    result = _.select
-    ({
-
-      src : o.src,
-      selector : o.selector,
-      preservingIteration : o.preservingIteration,
-      missingAction : o.missingAction,
-      recursive : 32,
-
-      onSelectorReplicate : resolver._onSelectorReplicate,
-      onSelectorDown : resolver._onSelectorDown,
-      onUpBegin : resolver._onUpBegin,
-      onUpEnd : resolver._onUpEnd,
-      onDownEnd : resolver._onDownEnd,
-      onQuantitativeFail : resolver._onQuantitativeFail,
-
-      iteratorExtension : o.iteratorExtension,
-      iterationExtension : o.iterationExtension,
-      iterationPreserve : o.iterationPreserve,
-
-    });
-
-  }
-  catch( err )
-  {
-    // debugger;
-    throw resolver.errResolving
-    ({
-      selector : o.selector,
-      rop : o,
-      err : err,
-    });
-  }
-
-  return result;
-}
-
-var defaults = _resolveAct.defaults = Object.create( resolve.defaults )
+let IterationPreserve = Resolver.IterationPreserve = _.mapExtend( null, Resolver.IterationPreserve );
+// IterationPreserve.absoluteLevel = 0;
 
 // --
 // declare
 // --
 
-let functionSymbol = Symbol.for( 'function' );
-let Extend =
+let composite = Symbol.for( 'composite' );
+// let composite = _.selector.composite;
+// _.assert( _.symbolIs( composite ) );
+
+var FunctorExtension =
+{
+  ... _.selector.functor,
+  onSelectorReplicateComposite,
+  onSelectorDownComposite,
+  // onSelectorUndecorateDoubleColon,
+}
+
+let ResolverExtension =
 {
 
-  name : 'wResolver',
-  shortName : 'Resolver',
-
-  // parser
-
-  strRequestParse,
-
-  _selectorIs,
-  selectorIs,
-  selectorIsComposite,
-  _selectorShortSplit,
-  selectorShortSplit,
-  selectorLongSplit,
-  selectorParse,
-  selectorStr,
-  selectorNormalize,
-
-  // handler
-
-  _onSelectorReplicate,
-  _onSelectorComposite,
-  _onSelectorDown,
-  _onUpBegin,
-  _onUpEnd,
-  _onDownEnd,
-  _onQuantitativeFail,
-
-  //
-
-  _arrayFlatten,
-  _arrayWrap,
-  _mapsFlatten,
-  _mapValsUnwrap,
-  _singleUnwrap,
-
-  _queryParse,
-  _resourceMapSelect,
-
-  // function
-
-  _functionStringsJoinUp,
-  _functionStringsJoinDown,
-
-  // err
-
-  errResolving,
-  errResolvingThrow,
-
-  // resolve
-
+  // selectSingleIt,
+  // selectSingle,
   resolve,
-  resolveMaybe,
-  _resolveAct,
+  // selectSet,
+  // selectUnique,
+
+  // onSelectorUndecorate,
+  onSelectorReplicate,
+  composite,
 
 }
 
-_.mapExtend( Self, Extend );
+// let SupplementSelect =
+// {
+//
+//   // onSelectorUndecorate,
+//   onSelectorReplicate,
+//   // composite,
+//
+// }
+
+let SupplementTools =
+{
+
+  Resolver,
+
+  // selectSingleIt,
+  // selectSingle,
+  resolve,
+  // selectSet,
+  // selectUnique,
+
+}
+
+let Self = Resolver;
+_.mapSupplement( _, SupplementTools );
+_.mapSupplement( _.resolver, ResolverExtension );
+_.mapSupplement( _.resolver.functor, FunctorExtension );
+// _.mapSupplement( select, SupplementSelect );
+
+if( _.accessor && _.accessor.forbid )
+{
+  _.accessor.forbid( _.select, { composite : 'composite' } );
+  _.accessor.forbid( _.selector, { composite : 'composite' } );
+}
+
+// --
+// export
+// --
 
 if( typeof module !== 'undefined' && module !== null )
 module[ 'exports' ] = _;

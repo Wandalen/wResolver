@@ -4,7 +4,10 @@ submodule :
   wTools :
     path : npm:///wTools
     enabled : 0 # submodule
-  wresolver :
+  wSelector :
+    path : npm:///wselector
+    enabled : 0 # submodule
+  wresolverextra :
     path : hd://.
     enabled : 0 # submodule
     criterion :
