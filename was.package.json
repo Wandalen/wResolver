@@ -1,6 +1,6 @@
 {
   "name" : "wresolver", 
-  "version" : "0.3.39", 
+  "version" : "0.3.40", 
   "description" : "Collection of routines to resolve complex data structures.", 
   "author" : "Kostiantyn Wandalen <wanalen@willbe.so>", 
   "license" : "MIT", 
@@ -16,7 +16,7 @@
   {
     "url" : "https://github.com/Wandalen/wResolver/issues"
   }, 
-  "dependencies" : { "wTools" : "", "wresolver" : "file:." }, 
-  "devDependencies" : { "wTesting" : "" }, 
+  "dependencies" : { "wTools" : "" }, 
+  "devDependencies" : { "wresolver" : "file:.", "wTesting" : "" }, 
   "keywords" : [ "wTools" ]
 }
