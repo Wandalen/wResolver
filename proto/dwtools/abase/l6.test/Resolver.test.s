@@ -46,6 +46,22 @@ function trivial( test )
 
   /* */
 
+  test.case = 'implicit';
+
+  var src =
+  {
+    dir :
+    {
+      val1 : 'Hello'
+    },
+  }
+
+  var exp = 'Hello';
+  var got = _.resolver.resolve( src, 'dir/val1' );
+  test.identical( got, exp );
+
+  /* */
+
   test.case = 'composite';
 
   var src =
