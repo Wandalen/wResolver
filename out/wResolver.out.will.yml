@@ -2,38 +2,32 @@ format: outwillfile-2.0
 root:
   - wResolver.out
 consistency:
-  wResolver.out.will.yml: &ref_0
-    hash: c0ec6a86412a4416d73ad06306d9e863
-    size: 38272
-  ../.ex.will.yml: &ref_1
-    hash: dcfee3957ffdcb22e5a0fcac68ed630e
-    size: 1859
-  ../.im.will.yml: &ref_2
-    hash: 0cdd26ba4bc039566937c93706963b07
-    size: 4936
+  ../.ex.will.yml: &ref_0
+    hash: 2913cbea2d891f519b86c982968ab5bb
+    size: 1709
+  ../.im.will.yml: &ref_1
+    hash: 4ecebd9f5754b6fc44633f5caaad9532
+    size: 5011
 module:
   wResolver.out:
     about:
       name: wResolver
       org: noorg
-      description: >-
-        Collection of routines to resolve complex data structures. It takes a
-        complex data structure, traverses it and resolves all strings having
-        inlined special substrings. Use the module to resolve your templates.
+      description: Collection of routines to resolve complex data structures.
       enabled: 1
       version: 0.4.0
-      interpreters:
+      interpreters: &ref_2
         - njs >= 8.0.0
         - chrome >= 60.0.0
         - firefox >= 60.0.0
-      keywords:
+      keywords: &ref_3
         - wTools
       license: MIT
       author: Kostiantyn Wandalen <wanalen@willbe.so>
-      contributors:
+      contributors: &ref_4
         - Kostiantyn Wandalen <wanalen@willbe.so>
       npm.name: wresolver
-      npm.scripts:
+      npm.scripts: &ref_5
         test: wtest .run proto/**
         docgen: wdocgen .build proto
     path:
@@ -171,7 +165,11 @@ module:
         path: 'npm:///wTools'
         autoExporting: 0
         enabled: 0
-      wresolver:
+      wSelector:
+        path: 'npm:///wselector'
+        autoExporting: 0
+        enabled: 0
+      wresolverextra:
         path: 'hd://..'
         autoExporting: 0
         enabled: 0
@@ -698,24 +696,6 @@ module:
           content: prime
         inherit:
           - files.transpile
-      exported.proto.export:
-        opts:
-          reflector: 'reflector::exported.proto.export*'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
-      exported.files.proto.export:
-        opts:
-          reflector: 'reflector::exported.files.proto.export*'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
     build:
       proto.export:
         steps:
@@ -804,33 +784,22 @@ module:
           content: proto
           export: 1
     consistency:
-      wResolver.out.will.yml: *ref_0
-      ../.ex.will.yml: *ref_1
-      ../.im.will.yml: *ref_2
+      ../.ex.will.yml: *ref_0
+      ../.im.will.yml: *ref_1
   ../:
     about:
       name: wResolver
       org: noorg
-      description: >-
-        Collection of routines to resolve complex data structures. It takes a
-        complex data structure, traverses it and resolves all strings having
-        inlined special substrings. Use the module to resolve your templates.
+      description: Collection of routines to resolve complex data structures.
       enabled: 1
       version: 0.4.0
-      interpreters:
-        - njs >= 8.0.0
-        - chrome >= 60.0.0
-        - firefox >= 60.0.0
-      keywords:
-        - wTools
+      interpreters: *ref_2
+      keywords: *ref_3
       license: MIT
       author: Kostiantyn Wandalen <wanalen@willbe.so>
-      contributors:
-        - Kostiantyn Wandalen <wanalen@willbe.so>
+      contributors: *ref_4
       npm.name: wresolver
-      npm.scripts:
-        test: wtest .run proto/**
-        docgen: wdocgen .build proto
+      npm.scripts: *ref_5
     path:
       module.willfiles:
         criterion:
@@ -944,7 +913,11 @@ module:
         path: 'npm:///wTools'
         autoExporting: 0
         enabled: 0
-      wresolver:
+      wSelector:
+        path: 'npm:///wselector'
+        autoExporting: 0
+        enabled: 0
+      wresolverextra:
         path: 'hd://.'
         autoExporting: 0
         enabled: 0
@@ -1497,9 +1470,8 @@ module:
           - 'build::npm'
     consistency:
       ../.ex.will.yml:
-        hash: dcfee3957ffdcb22e5a0fcac68ed630e
-        size: 1859
+        hash: 2913cbea2d891f519b86c982968ab5bb
+        size: 1709
       ../.im.will.yml:
-        hash: 0cdd26ba4bc039566937c93706963b07
-        size: 4936
-      wResolver.out.will.yml: *ref_0
+        hash: 4ecebd9f5754b6fc44633f5caaad9532
+        size: 5011
