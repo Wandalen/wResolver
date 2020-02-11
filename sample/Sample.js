@@ -6,17 +6,16 @@ var src =
   {
     val1 : 'Hello'
   },
-  val2 : 'here',
 }
 
-let resolved = _.resolver.resolveQualified
+var resolved = _.resolver.resolve
 ({
   src : src,
-  selector : '{::dir/val1} from {::val2}!',
+  selector : 'dir/val1',
 });
 
 console.log( resolved );
 
 /*
-`Hello from here!`
+`Hello`
 */

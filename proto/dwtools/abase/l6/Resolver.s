@@ -1055,6 +1055,7 @@ function resolve_body( o )
     // if( _.longIs( it.src ) )
     // debugger;
 
+    debugger;
     selector = o.onSelectorReplicate.call( it, { selector : it.src, counter } );
 
     do

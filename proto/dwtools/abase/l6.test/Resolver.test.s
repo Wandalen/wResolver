@@ -21,6 +21,60 @@ var _ = _global_.wTools;
 // tests
 // --
 
+function trivial( test )
+{
+
+  /* */
+
+  test.case = 'basic';
+
+  var src =
+  {
+    dir :
+    {
+      val1 : 'Hello'
+    },
+  }
+
+  var exp = 'Hello';
+  var got = _.resolver.resolve
+  ({
+    src : src,
+    selector : 'dir/val1',
+  });
+  test.identical( got, exp );
+
+  /* */
+
+  test.case = 'composite';
+
+  var src =
+  {
+    dir :
+    {
+      val1 : 'Hello'
+    },
+    val2 : 'here',
+    val3 : '{dir/val1} from {val2}!',
+  }
+
+  var exp = 'Hello from here!';
+  var got = _.resolver.resolve
+  ({
+    src : src,
+    selector : '{val3}',
+    onSelectorReplicate : _.resolver.functor.onSelectorReplicateComposite(),
+    onSelectorDown : _.resolver.functor.onSelectorDownComposite(),
+    recursive : 10,
+  });
+  test.identical( got, exp );
+
+  /* */
+
+}
+
+//
+
 function resolveMultiple( test )
 {
 
@@ -1073,6 +1127,7 @@ var Self =
   tests :
   {
 
+    trivial,
     resolveMultiple,
     resolveComposite,
     resolveDecoratedFixes,
