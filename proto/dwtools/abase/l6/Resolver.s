@@ -175,7 +175,7 @@ function resolve_body( o )
     let visited = [];
     let counter = 0;
 
-    // if( _.strIs( it.src ) && _.strHas( it.src, '*::' ) ) 
+    // if( _.strIs( it.src ) && _.strHas( it.src, '*::' ) )
     // debugger;
     selector = o.onSelectorReplicate.call( it, { selector : it.src, counter } );
 
@@ -199,7 +199,7 @@ function resolve_body( o )
               if( single.selected )
               it.dst = single.result;
               it.continue = false;
-              it.dstSetting = false;
+              it.dstMaking = false; /* xxx */
             }
           }
           else
@@ -207,7 +207,7 @@ function resolve_body( o )
             if( single.selected )
             it.dst = single.result;
             it.continue = false;
-            it.dstSetting = false;
+            it.dstMaking = false; /* xxx */
           }
         }
       }
