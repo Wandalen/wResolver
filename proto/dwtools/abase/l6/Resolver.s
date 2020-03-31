@@ -14,7 +14,7 @@
 
 /**
  * Collection of routines to resolve a sub-structure from a complex data structure.
-  @namespace Tools( module::Resolver )
+  @namespace Tools.Resolver 
   @memberof module:Tools/base/Resolver
 */
 
