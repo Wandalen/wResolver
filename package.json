@@ -2,7 +2,7 @@
   "name" : "wresolver",
   "version" : "0.3.73",
   "description" : "Collection of routines to resolve complex data structures.",
-  "author" : "Kostiantyn Wandalen <wanalen@willbe.so>",
+  "author" : "Kostiantyn Wandalen <wanalen@01.school>",
   "license" : "MIT",
   "main" : "proto/dwtools/abase/l6/Resolver.s",
   "files" : [ "proto/dwtools/abase/l6", "proto/dwtools/Tools.s" ],
