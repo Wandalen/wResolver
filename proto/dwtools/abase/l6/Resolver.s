@@ -466,7 +466,7 @@ if( _.accessor && _.accessor.forbid )
 // export
 // --
 
-if( typeof module !== 'undefined' && module !== null )
+if( typeof module !== 'undefined' )
 module[ 'exports' ] = _;
 
 })();
