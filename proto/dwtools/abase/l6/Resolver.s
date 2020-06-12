@@ -14,7 +14,7 @@
 
 /**
  * Collection of routines to resolve a sub-structure from a complex data structure.
-  @namespace Tools.Resolver 
+  @namespace Tools.Resolver
   @memberof module:Tools/base/Resolver
 */
 
@@ -138,7 +138,7 @@ function resolve_body( o )
 
   /* */
 
-  function selectSingle( visited )
+  function select( visited )
   {
     let it = this;
 
@@ -160,7 +160,7 @@ function resolve_body( o )
 
     _.assert( _.strIs( op.selector ) );
 
-    op.result = _.selectSingle( op );
+    op.result = _.select( op );
     op.selected = true;
 
     return op;
@@ -188,7 +188,7 @@ function resolve_body( o )
           it.src = selector;
           it.iterable = null;
           it.srcChanged();
-          let single = selectSingle.call( it, visited );
+          let single = select.call( it, visited );
           selector = undefined;
           if( single.result !== undefined && o.recursive && visited.length <= o.recursive )
           {
@@ -245,7 +245,7 @@ function resolve_body( o )
 
 }
 
-_.routineExtend( resolve_body, _.selector.selectSingle.body );
+_.routineExtend( resolve_body, _.selector.select.body );
 
 var defaults = resolve_body.defaults;
 defaults.root = null;
