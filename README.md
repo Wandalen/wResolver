@@ -1,5 +1,5 @@
 
-# wResolver [![Build Status](https://travis-ci.org/Wandalen/wResolver.svg?branch=master)](https://travis-ci.org/Wandalen/wResolver)
+# module::Resolver [![Status](https://github.com/Wandalen/wResolver/workflows/Test/badge.svg)](https://github.com/Wandalen/wResolver}/actions?query=workflow%3ATest)
 
 Collection of routines to resolve complex data structures.
 
