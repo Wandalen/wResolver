@@ -1,6 +1,6 @@
 {
   "name" : "wresolver",
-  "version" : "0.3.82",
+  "version" : "0.3.83",
   "description" : "Collection of routines to resolve complex data structures.",
   "author" : "Kostiantyn Wandalen <wanalen@01.school>",
   "license" : "MIT",
