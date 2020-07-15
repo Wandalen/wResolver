@@ -29,5 +29,5 @@ log : `Hello`
 
 ```
 npm install
-node sample/Sample.js
+node sample/Sample.s
 ```
