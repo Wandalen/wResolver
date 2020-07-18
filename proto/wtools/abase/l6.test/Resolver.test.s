@@ -1190,7 +1190,7 @@ function resolveRecursive( test )
 let Self =
 {
 
-  name : 'Tools.base.l6.Resolver',
+  name : 'Tools.l6.Resolver',
   silencing : 1,
   routineTimeOut : 15000,
 
