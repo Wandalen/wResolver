@@ -9,8 +9,7 @@
 */
 
 /**
- * @file l6/Resolver.s.
- */
+ *  */
 
 /**
  * Collection of routines to resolve a sub-structure from a complex data structure.
