@@ -1,1 +1,22 @@
-{"name":"wresolver","version":"0.3.91","description":"Collection of routines to resolve complex data structures.","author":"Kostiantyn Wandalen <wanalen@01.school>","license":"MIT","main":"proto/wtools/abase/l6/Resolver.s","files":["proto/wtools/abase/l6","proto/wtools/Tools.s"],"scripts":{"test":"wtest .run 'proto/**' rapidity:-3","docgen":"wdocgen proto"},"repository":{"type":"git","url":"https://github.com/Wandalen/wResolver.git"},"bugs":{"url":"https://github.com/Wandalen/wResolver/issues"},"dependencies":{"wTools":""},"devDependencies":{"wresolver":"file:.","wTesting":""},"keywords":["wTools"]}
+{
+  "name" : "wresolver",
+  "version" : "0.3.92",
+  "description" : "Collection of routines to resolve complex data structures.",
+  "author" : "Kostiantyn Wandalen <wanalen@01.school>",
+  "license" : "MIT",
+  "main" : "proto/wtools/abase/l6/Resolver.s",
+  "files" : [ "proto/wtools/abase/l6", "proto/wtools/Tools.s" ],
+  "scripts" : { "test" : "wtest .run 'proto/**' rapidity:-3", "docgen" : "wdocgen proto" },
+  "repository" :
+  {
+    "type" : "git",
+    "url" : "https://github.com/Wandalen/wResolver.git"
+  },
+  "bugs" :
+  {
+    "url" : "https://github.com/Wandalen/wResolver/issues"
+  },
+  "dependencies" : { "wTools" : "" },
+  "devDependencies" : { "wresolver" : "file:.", "wTesting" : "" },
+  "keywords" : [ "wTools" ]
+}
