@@ -2,13 +2,10 @@ format: outwillfile-2.0
 root:
   - wResolver.out
 consistency:
-  wResolver.out.will.yml: &ref_0
-    hash: ab637a64c2fe7a1090cad862574f0c7a
-    size: 37940
-  ../.ex.will.yml: &ref_1
-    hash: 0e442cc81ca77b9300cc02491a496471
-    size: 1710
-  ../.im.will.yml: &ref_2
+  ../.ex.will.yml: &ref_0
+    hash: 1c09b0804fa312e8884fb58661894c4a
+    size: 1725
+  ../.im.will.yml: &ref_1
     hash: 67cffcc9a47003d986f147d8eed5e002
     size: 5008
 module:
@@ -16,21 +13,23 @@ module:
     about:
       name: wResolver
       org: noorg
-      description: Collection of cross-platform routines to resolve complex data structures.
+      description: >-
+        Collection of cross-platform routines to resolve complex data
+        structures.
       enabled: 1
       version: 0.4.0
-      interpreters:
+      interpreters: &ref_2
         - njs >= 10.0.0
         - chrome >= 60.0.0
         - firefox >= 60.0.0
-      keywords:
+      keywords: &ref_3
         - wTools
       license: MIT
       author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors:
+      contributors: &ref_4
         - Kostiantyn Wandalen <wanalen@01.school>
       npm.name: wresolver
-      npm.scripts:
+      npm.scripts: &ref_5
         test: wtest .run proto/**
         docgen: wdocgen .build proto
     path:
@@ -692,24 +691,6 @@ module:
           content: prime
         inherit:
           - files.transpile
-      exported.proto.export:
-        opts:
-          filePath: 'reflector::exported.proto.export'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
-      exported.files.proto.export:
-        opts:
-          filePath: 'reflector::exported.files.proto.export'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
     build:
       proto.export:
         steps:
@@ -798,30 +779,24 @@ module:
           content: proto
           export: 1
     consistency:
-      wResolver.out.will.yml: *ref_0
-      ../.ex.will.yml: *ref_1
-      ../.im.will.yml: *ref_2
+      ../.ex.will.yml: *ref_0
+      ../.im.will.yml: *ref_1
   ../:
     about:
       name: wResolver
       org: noorg
-      description: Collection of cross-platform routines to resolve complex data structures.
+      description: >-
+        Collection of cross-platform routines to resolve complex data
+        structures.
       enabled: 1
       version: 0.4.0
-      interpreters:
-        - njs >= 10.0.0
-        - chrome >= 60.0.0
-        - firefox >= 60.0.0
-      keywords:
-        - wTools
+      interpreters: *ref_2
+      keywords: *ref_3
       license: MIT
       author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors:
-        - Kostiantyn Wandalen <wanalen@01.school>
+      contributors: *ref_4
       npm.name: wresolver
-      npm.scripts:
-        test: wtest .run proto/**
-        docgen: wdocgen .build proto
+      npm.scripts: *ref_5
     path:
       module.willfiles:
         criterion:
@@ -1483,9 +1458,8 @@ module:
           - 'build::npm'
     consistency:
       ../.ex.will.yml:
-        hash: 0e442cc81ca77b9300cc02491a496471
-        size: 1710
+        hash: 1c09b0804fa312e8884fb58661894c4a
+        size: 1725
       ../.im.will.yml:
         hash: 67cffcc9a47003d986f147d8eed5e002
         size: 5008
-      wResolver.out.will.yml: *ref_0
