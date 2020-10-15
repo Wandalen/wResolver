@@ -4,7 +4,7 @@
 
 
 /**
- * Collection of routines to resolve complex data structures.
+ * Collection of cross-platform routines to resolve complex data structures.
   @module Tools/base/Resolver
 */
 
@@ -12,7 +12,7 @@
  *  */
 
 /**
- * Collection of routines to resolve a sub-structure from a complex data structure.
+ * Collection of cross-platform routines to resolve a sub-structure from a complex data structure.
   @namespace Tools.Resolver
   @memberof module:Tools/base/Resolver
 */
@@ -42,7 +42,7 @@ _.assert( !!_realGlobal_ );
 // extend looker
 // --
 
-function resolve_pre( routine, args )
+function resolve_head( routine, args )
 {
 
   let o = args[ 0 ]
@@ -289,7 +289,7 @@ _.assert( _.routineIs( defaults.onSelectorUndecorate ) );
  * @memberof module:Tools/base/Resolver.Tools( module::Resolver )
 */
 
-let resolve = _.routineFromPreAndBody( resolve_pre, resolve_body );
+let resolve = _.routineUnite( resolve_head, resolve_body );
 
 //
 
@@ -389,7 +389,7 @@ onSelectorReplicateComposite.defaults =
   prefix : '{',
   postfix : '}',
   onSelectorReplicate : null,
-  isStrippedSelector : 0, /* treat selector beyond affixes like "pre::c/c2" as selector */
+  isStrippedSelector : 0, /* treat selector beyond affixes like "head::c/c2" as selector */
   rewrapping : 1,
 }
 

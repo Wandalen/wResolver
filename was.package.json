@@ -1,7 +1,7 @@
 {
   "name" : "wresolver",
   "version" : "0.3.96",
-  "description" : "Collection of routines to resolve complex data structures.",
+  "description" : "Collection of cross-platform routines to resolve complex data structures.",
   "author" : "Kostiantyn Wandalen <wanalen@01.school>",
   "license" : "MIT",
   "main" : "proto/wtools/abase/l6/Resolver.s",

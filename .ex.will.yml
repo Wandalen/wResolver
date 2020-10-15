@@ -2,7 +2,7 @@
 about :
 
   name : 'wResolver'
-  description : 'Collection of routines to resolve complex data structures.'
+  description : 'Collection of cross-platform routines to resolve complex data structures.'
   version : '0.4.0'
   enabled : 1
   interpreters :

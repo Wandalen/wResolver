@@ -16,7 +16,7 @@ module:
     about:
       name: wResolver
       org: noorg
-      description: Collection of routines to resolve complex data structures.
+      description: Collection of cross-platform routines to resolve complex data structures.
       enabled: 1
       version: 0.4.0
       interpreters:
@@ -805,7 +805,7 @@ module:
     about:
       name: wResolver
       org: noorg
-      description: Collection of routines to resolve complex data structures.
+      description: Collection of cross-platform routines to resolve complex data structures.
       enabled: 1
       version: 0.4.0
       interpreters:

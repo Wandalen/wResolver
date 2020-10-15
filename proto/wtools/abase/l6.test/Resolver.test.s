@@ -626,9 +626,9 @@ function resolveDecoratedInfix( test )
 
   /* */
 
-  test.case = '{pre::b/b1}';
+  test.case = '{head::b/b1}';
   var expected = 1;
-  var selector = '{pre::b/b1}';
+  var selector = '{head::b/b1}';
   var got = _.resolve
   ({
     src,
@@ -656,13 +656,13 @@ function resolveDecoratedInfix( test )
 
   /* */
 
-  test.case = '{pre::c/c2}';
+  test.case = '{head::c/c2}';
   var expected =
   [
     'c21',
     'c22'
   ]
-  var selector = '{pre::c/c2}';
+  var selector = '{head::c/c2}';
   var got = _.resolve
   ({
     src,
@@ -675,9 +675,9 @@ function resolveDecoratedInfix( test )
 
   /* */
 
-  test.case = 'pre::c/c2, isStrippedSelector : 0';
-  var expected = 'pre::c/c2';
-  var selector = 'pre::c/c2';
+  test.case = 'head::c/c2, isStrippedSelector : 0';
+  var expected = 'head::c/c2';
+  var selector = 'head::c/c2';
   var got = _.resolve
   ({
     src,
@@ -690,13 +690,13 @@ function resolveDecoratedInfix( test )
 
   /* */
 
-  test.case = 'pre::c/c2, isStrippedSelector : 1';
+  test.case = 'head::c/c2, isStrippedSelector : 1';
   var expected =
   [
     'c21',
     'c22'
   ]
-  var selector = 'pre::c/c2';
+  var selector = 'head::c/c2';
   var got = _.resolve
   ({
     src,
@@ -715,7 +715,7 @@ function resolveDecoratedInfix( test )
     'Some test with inlined c21 and 1 and false.',
     'Some test with inlined c22 and 1 and false.'
   ]
-  var selector = 'Some test with inlined {pre::c/c2} and {pre::b/b1} and {pre::c/c1}.';
+  var selector = 'Some test with inlined {head::c/c2} and {head::b/b1} and {head::c/c1}.';
   var got = _.resolve
   ({
     src,
@@ -734,9 +734,9 @@ function resolveDecoratedInfix( test )
 
   /* */
 
-  test.case = 'pre::b/b1';
+  test.case = 'head::b/b1';
   var expected = 1;
-  var selector = 'pre::b/b1';
+  var selector = 'head::b/b1';
   var got = _.resolve
   ({
     src,
@@ -764,13 +764,13 @@ function resolveDecoratedInfix( test )
 
   /* */
 
-  test.case = 'pre::c/c2';
+  test.case = 'head::c/c2';
   var expected =
   [
     'c21',
     'c22'
   ]
-  var selector = 'pre::c/c2';
+  var selector = 'head::c/c2';
   var got = _.resolve
   ({
     src,
@@ -783,13 +783,13 @@ function resolveDecoratedInfix( test )
 
   /* */
 
-  test.case = '{pre::c/c2';
+  test.case = '{head::c/c2';
   var expected =
   [
     'c21',
     'c22'
   ]
-  var selector = '{pre::c/c2';
+  var selector = '{head::c/c2';
   var got = _.resolve
   ({
     src,
@@ -841,9 +841,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'pre::b/b1';
+  test.case = 'head::b/b1';
   var expected = 'c21';
-  var selector = 'pre::b/b1';
+  var selector = 'head::b/b1';
   var got = _.resolve
   ({
     src,
@@ -857,9 +857,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'pre::b/b1, recursive : 0';
+  test.case = 'head::b/b1, recursive : 0';
   var expected = '::a/map/name';
-  var selector = 'pre::b/b1';
+  var selector = 'head::b/b1';
   var got = _.resolve
   ({
     src,
@@ -873,9 +873,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'pre::b/b1, recursive : 1';
+  test.case = 'head::b/b1, recursive : 1';
   var expected = '::c/c2/0';
-  var selector = 'pre::b/b1';
+  var selector = 'head::b/b1';
   var got = _.resolve
   ({
     src,
@@ -889,9 +889,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'pre::b/b1, recursive : 2';
+  test.case = 'head::b/b1, recursive : 2';
   var expected = 'c21';
-  var selector = 'pre::b/b1';
+  var selector = 'head::b/b1';
   var got = _.resolve
   ({
     src,
@@ -920,9 +920,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = '{pre::b/b1}';
+  test.case = '{head::b/b1}';
   var expected = 'c21';
-  var selector = '{pre::b/b1}';
+  var selector = '{head::b/b1}';
   var got = _.resolve
   ({
     src,
@@ -936,9 +936,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = '{pre::b/b1}, recursive : 0';
+  test.case = '{head::b/b1}, recursive : 0';
   var expected = '{::a/map/name}';
-  var selector = '{pre::b/b1}';
+  var selector = '{head::b/b1}';
   var got = _.resolve
   ({
     src,
@@ -952,9 +952,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = '{pre::b/b1}, recursive : 1';
+  test.case = '{head::b/b1}, recursive : 1';
   var expected = '{::c/c2/0}';
-  var selector = '{pre::b/b1}';
+  var selector = '{head::b/b1}';
   var got = _.resolve
   ({
     src,
@@ -968,9 +968,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = '{pre::b/b1}, recursive : 2';
+  test.case = '{head::b/b1}, recursive : 2';
   var expected = 'c21';
-  var selector = '{pre::b/b1}';
+  var selector = '{head::b/b1}';
   var got = _.resolve
   ({
     src,
@@ -999,9 +999,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'begin {pre::b/b1} mid {b/b2} end';
+  test.case = 'begin {head::b/b1} mid {b/b2} end';
   var expected = [ 'begin c21 mid b2-a end', 'begin c21 mid b2-b end' ];
-  var selector = 'begin {pre::b/b1} mid {::b/b2} end';
+  var selector = 'begin {head::b/b1} mid {::b/b2} end';
   var got = _.resolve
   ({
     src,
@@ -1015,9 +1015,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'begin {pre::b/b1} mid {b/b2} end, recursive : 0';
+  test.case = 'begin {head::b/b1} mid {b/b2} end, recursive : 0';
   var expected = [ 'begin {::a/map/name} mid b2-a end', 'begin {::a/map/name} mid b2-b end' ];
-  var selector = 'begin {pre::b/b1} mid {::b/b2} end';
+  var selector = 'begin {head::b/b1} mid {::b/b2} end';
   var got = _.resolve
   ({
     src,
@@ -1031,9 +1031,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'begin {pre::b/b1} mid {b/b2} end, recursive : 1';
+  test.case = 'begin {head::b/b1} mid {b/b2} end, recursive : 1';
   var expected = [ 'begin {::c/c2/0} mid b2-a end', 'begin {::c/c2/0} mid b2-b end' ];
-  var selector = 'begin {pre::b/b1} mid {::b/b2} end';
+  var selector = 'begin {head::b/b1} mid {::b/b2} end';
   var got = _.resolve
   ({
     src,
@@ -1047,9 +1047,9 @@ function resolveRecursive( test )
 
   /* */
 
-  test.case = 'begin {pre::b/b1} mid {b/b2} end, recursive : 2';
+  test.case = 'begin {head::b/b1} mid {b/b2} end, recursive : 2';
   var expected = [ 'begin c21 mid b2-a end', 'begin c21 mid b2-b end' ];
-  var selector = 'begin {pre::b/b1} mid {::b/b2} end';
+  var selector = 'begin {head::b/b1} mid {::b/b2} end';
   var got = _.resolve
   ({
     src,
