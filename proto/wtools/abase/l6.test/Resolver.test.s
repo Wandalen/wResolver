@@ -111,8 +111,8 @@ function resolveMultiple( test )
   var expected = [ { b1 : 1, b2 : 'b2' }, { c1 : 1, c2 : 'c2' } ];
   var got = _.resolve( src, [ 'b', 'c' ] );
   test.identical( got, expected );
-  test.is( got[ 0 ] === src.b );
-  test.is( got[ 1 ] === src.c );
+  test.true( got[ 0 ] === src.b );
+  test.true( got[ 1 ] === src.c );
 
   /* */
 
@@ -120,8 +120,8 @@ function resolveMultiple( test )
   var expected = [ 'b2', { c1 : 1, c2 : 'c2' } ];
   var got = _.resolve( src, [ 'b/b2', 'c' ] );
   test.identical( got, expected );
-  test.is( got[ 0 ] === src.b.b2 );
-  test.is( got[ 1 ] === src.c );
+  test.true( got[ 0 ] === src.b.b2 );
+  test.true( got[ 1 ] === src.c );
 
   /* */
 
@@ -129,9 +129,9 @@ function resolveMultiple( test )
   var expected = [ 'b2', { a : { c1 : 1, c2 : 'c2' }, b : { name : 'name1' } } ];
   var got = _.resolve( src, [ 'b/b2', { a : 'c', b : 'a/map' } ] );
   test.identical( got, expected );
-  test.is( got[ 0 ] === src.b.b2 );
-  test.is( got[ 1 ][ 'a' ] === src.c );
-  test.is( got[ 1 ][ 'b' ] === src.a.map );
+  test.true( got[ 0 ] === src.b.b2 );
+  test.true( got[ 1 ][ 'a' ] === src.c );
+  test.true( got[ 1 ][ 'b' ] === src.a.map );
 
   /* */
 
@@ -139,8 +139,8 @@ function resolveMultiple( test )
   var expected = [ 'b2', { a : src } ];
   var got = _.resolve( src, [ 'b/b2', { a : '/', b : '' } ] );
   test.identical( got, expected );
-  test.is( got[ 1 ].a === src );
-  test.is( got.length === 2 );
+  test.true( got[ 1 ].a === src );
+  test.true( got.length === 2 );
 
   /* */
 
@@ -156,8 +156,8 @@ function resolveMultiple( test )
   var expected = { b : { b1 : 1, b2 : 'b2' }, c: { c1 : 1, c2 : 'c2' } };
   var got = _.resolve( src, { b : 'b', c : 'c' } );
   test.identical( got, expected );
-  test.is( got.b === src.b );
-  test.is( got.c === src.c );
+  test.true( got.b === src.b );
+  test.true( got.c === src.c );
 
   /* */
 
@@ -165,8 +165,8 @@ function resolveMultiple( test )
   var expected = { b2 : 'b2', c : { c1 : 1, c2 : 'c2' } };
   var got = _.resolve( src, { b2 : 'b/b2', c : 'c' } );
   test.identical( got, expected );
-  test.is( got.b2 === src.b.b2 );
-  test.is( got.c === src.c );
+  test.true( got.b2 === src.b.b2 );
+  test.true( got.c === src.c );
 
   /* */
 
@@ -174,9 +174,9 @@ function resolveMultiple( test )
   var expected = { b : 'b2', array : [ { c1 : 1, c2 : 'c2' }, { name : 'name1' } ] };
   var got = _.resolve( src, { b : 'b/b2', array : [ 'c', 'a/map' ] } );
   test.identical( got, expected );
-  test.is( got[ 'b' ] === src.b.b2 );
-  test.is( got[ 'array' ][ 0 ] === src.c );
-  test.is( got[ 'array' ][ 1 ] === src.a.map );
+  test.true( got[ 'b' ] === src.b.b2 );
+  test.true( got[ 'array' ][ 0 ] === src.c );
+  test.true( got[ 'array' ][ 1 ] === src.a.map );
 
   /* */
 
@@ -184,8 +184,8 @@ function resolveMultiple( test )
   var expected = { array : [ src ] };
   var got = _.resolve( src, { b : '', array : [ '/', '' ] } );
   test.identical( got, expected );
-  test.is( got.array[ 0 ] === src );
-  test.is( got.array.length === 1 );
+  test.true( got.array[ 0 ] === src );
+  test.true( got.array.length === 1 );
 
   /* */
 
@@ -397,7 +397,7 @@ function resolveDecoratedFixes( test )
   var selector = '{a}';
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got === src.a );
+  test.true( got === src.a );
 
   /* */
 
@@ -406,7 +406,7 @@ function resolveDecoratedFixes( test )
   var selector = '{a/map}';
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got === src.a.map );
+  test.true( got === src.a.map );
 
   test.close( 'primitive' );
 
@@ -443,8 +443,8 @@ function resolveDecoratedFixes( test )
   var selector = [ '{b}', '{c}' ];
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got[ 0 ] === src.b );
-  test.is( got[ 1 ] === src.c );
+  test.true( got[ 0 ] === src.b );
+  test.true( got[ 1 ] === src.c );
 
   /* */
 
@@ -453,8 +453,8 @@ function resolveDecoratedFixes( test )
   var selector = [ '{b/b2}', '{c}' ];
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got[ 0 ] === src.b.b2 );
-  test.is( got[ 1 ] === src.c );
+  test.true( got[ 0 ] === src.b.b2 );
+  test.true( got[ 1 ] === src.c );
 
   /* */
 
@@ -463,9 +463,9 @@ function resolveDecoratedFixes( test )
   var selector = [ '{b/b2}', { a : '{c}', b : '{a/map}' } ];
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got[ 0 ] === src.b.b2 );
-  test.is( got[ 1 ][ 'a' ] === src.c );
-  test.is( got[ 1 ][ 'b' ] === src.a.map );
+  test.true( got[ 0 ] === src.b.b2 );
+  test.true( got[ 1 ][ 'a' ] === src.c );
+  test.true( got[ 1 ][ 'b' ] === src.a.map );
 
   test.close( 'array' );
 
@@ -480,7 +480,7 @@ function resolveDecoratedFixes( test )
   var expected = selector;
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, selector );
-  test.is( got !== selector );
+  test.true( got !== selector );
 
   /* */
 
@@ -489,7 +489,7 @@ function resolveDecoratedFixes( test )
   var expected = selector;
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, selector );
-  test.is( got !== selector );
+  test.true( got !== selector );
 
   /* */
 
@@ -498,7 +498,7 @@ function resolveDecoratedFixes( test )
   var expected = selector;
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, selector );
-  test.is( got !== selector );
+  test.true( got !== selector );
 
   test.close( 'array, lack of fixes' );
 
@@ -513,8 +513,8 @@ function resolveDecoratedFixes( test )
   var selector = { b : '{b}', c : '{c}' };
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got.b === src.b );
-  test.is( got.c === src.c );
+  test.true( got.b === src.b );
+  test.true( got.c === src.c );
 
   /* */
 
@@ -523,8 +523,8 @@ function resolveDecoratedFixes( test )
   var selector = { b2 : '{b/b2}', c : '{c}' };
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got.b2 === src.b.b2 );
-  test.is( got.c === src.c );
+  test.true( got.b2 === src.b.b2 );
+  test.true( got.c === src.c );
 
   /* */
 
@@ -533,9 +533,9 @@ function resolveDecoratedFixes( test )
   var selector = { b : '{b/b2}', array : [ '{c}', '{a/map}' ] };
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got[ 'b' ] === src.b.b2 );
-  test.is( got[ 'array' ][ 0 ] === src.c );
-  test.is( got[ 'array' ][ 1 ] === src.a.map );
+  test.true( got[ 'b' ] === src.b.b2 );
+  test.true( got[ 'array' ][ 0 ] === src.c );
+  test.true( got[ 'array' ][ 1 ] === src.a.map );
 
   test.close( 'map' );
 
@@ -550,7 +550,7 @@ function resolveDecoratedFixes( test )
   var expected = selector;
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, selector );
-  test.is( got !== selector );
+  test.true( got !== selector );
 
   /* */
 
@@ -559,7 +559,7 @@ function resolveDecoratedFixes( test )
   var expected = selector;
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, selector );
-  test.is( got !== selector );
+  test.true( got !== selector );
 
   /* */
 
@@ -568,7 +568,7 @@ function resolveDecoratedFixes( test )
   var expected = selector;
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, selector );
-  test.is( got !== selector );
+  test.true( got !== selector );
 
   test.close( 'map, lack of fixes' );
 
@@ -583,7 +583,7 @@ function resolveDecoratedFixes( test )
   var selector = { b : 'b', c : '{c}' };
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got.c === src.c );
+  test.true( got.c === src.c );
 
   /* */
 
@@ -592,7 +592,7 @@ function resolveDecoratedFixes( test )
   var selector = { b2 : '{b/b2}', c : 'c' };
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got.b2 === src.b.b2 );
+  test.true( got.b2 === src.b.b2 );
 
   /* */
 
@@ -601,8 +601,8 @@ function resolveDecoratedFixes( test )
   var selector = { b : '{b/b2}', array : [ 'c', '{a/map}' ] };
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
-  test.is( got.b === src.b.b2 );
-  test.is( got.array[ 1 ] === src.a.map );
+  test.true( got.b === src.b.b2 );
+  test.true( got.array[ 1 ] === src.a.map );
 
   test.close( 'mixed lack of fixes' );
 
