@@ -1,5 +1,6 @@
 
-let _ = require( 'wresolverextra' );
+// let _ = require( 'wresolverextra' );
+let _ = require( 'wresolver' );
 var src =
 {
   dir :
