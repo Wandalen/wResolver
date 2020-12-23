@@ -1,4 +1,5 @@
-( function _Resolver_test_s_() {
+( function _Resolver_test_s_()
+{
 
 'use strict';
 
@@ -39,7 +40,7 @@ function trivial( test )
   var exp = 'Hello';
   var got = _.resolver.resolve
   ({
-    src : src,
+    src,
     selector : 'dir/val1',
   });
   test.identical( got, exp );
@@ -77,7 +78,7 @@ function trivial( test )
   var exp = 'Hello from here!';
   var got = _.resolver.resolve
   ({
-    src : src,
+    src,
     selector : '{val3}',
     onSelectorReplicate : _.resolver.functor.onSelectorReplicateComposite(),
     onSelectorDown : _.resolver.functor.onSelectorDownComposite(),
@@ -153,7 +154,7 @@ function resolveMultiple( test )
   /* */
 
   test.case = 'first level selector';
-  var expected = { b : { b1 : 1, b2 : 'b2' }, c: { c1 : 1, c2 : 'c2' } };
+  var expected = { b : { b1 : 1, b2 : 'b2' }, c : { c1 : 1, c2 : 'c2' } };
   var got = _.resolve( src, { b : 'b', c : 'c' } );
   test.identical( got, expected );
   test.true( got.b === src.b );
@@ -509,7 +510,7 @@ function resolveDecoratedFixes( test )
   /* */
 
   test.case = 'first level selector';
-  var expected = { b : { b1 : 1, b2 : 'b2' }, c: { c1 : 1, c2 : 'c2' } };
+  var expected = { b : { b1 : 1, b2 : 'b2' }, c : { c1 : 1, c2 : 'c2' } };
   var selector = { b : '{b}', c : '{c}' };
   var got = _.resolve({ src, selector, onSelectorReplicate });
   test.identical( got, expected );
@@ -1097,7 +1098,7 @@ function resolveRecursive( test )
   var exp = 'user1 - 13 !';
   var got = _.resolve
   ({
-    src : src,
+    src,
     selector : '{::result/::dir/::userX} !',
     compositeSelecting : 1,
     recursive : Infinity,
@@ -1113,7 +1114,7 @@ function resolveRecursive( test )
   var exp = '{::about/::user} - {::var/::dir/::x} !';
   var got = _.resolve
   ({
-    src : src,
+    src,
     selector : '{::result/::dir/::userX} !',
     compositeSelecting : 1,
     onSelectorReplicate : _.resolver.functor.onSelectorReplicateComposite({ onSelectorReplicate }),
@@ -1128,7 +1129,7 @@ function resolveRecursive( test )
   var exp = '{::about/::user} - {::var/::dir/::x} !';
   var got = _.resolve
   ({
-    src : src,
+    src,
     selector : '{::result/::dir/::userX} !',
     compositeSelecting : 1,
     recursive : 0,
@@ -1145,7 +1146,7 @@ function resolveRecursive( test )
   {
     var got = _.resolve
     ({
-      src : src,
+      src,
       selector : '{result::dir/userX} !',
       compositeSelecting : 1,
       recursive : Infinity,
