@@ -1,4 +1,5 @@
-( function _Resolver_s_() {
+( function _Resolver_s_()
+{
 
 'use strict';
 
@@ -183,31 +184,29 @@ function resolve_body( o )
 
       if( _.strIs( selector ) )
       {
+        it.src = selector;
+        it.iterable = null;
+        it.srcChanged();
+        let single = select.call( it, visited );
+        selector = undefined;
+        if( single.result !== undefined && o.recursive && visited.length <= o.recursive )
         {
-          it.src = selector;
-          it.iterable = null;
-          it.srcChanged();
-          let single = select.call( it, visited );
-          selector = undefined;
-          if( single.result !== undefined && o.recursive && visited.length <= o.recursive )
-          {
-            counter += 1;
-            selector = o.onSelectorReplicate.call( it, { selector : single.result, counter } );
-            if( selector === undefined )
-            {
-              if( single.selected )
-              it.dst = single.result;
-              it.continue = false;
-              it.dstMaking = false; /* xxx */
-            }
-          }
-          else
+          counter += 1;
+          selector = o.onSelectorReplicate.call( it, { selector : single.result, counter } );
+          if( selector === undefined )
           {
             if( single.selected )
             it.dst = single.result;
             it.continue = false;
             it.dstMaking = false; /* xxx */
           }
+        }
+        else
+        {
+          if( single.selected )
+          it.dst = single.result;
+          it.continue = false;
+          it.dstMaking = false; /* xxx */
         }
       }
       else if( selector !== undefined )
