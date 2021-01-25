@@ -21,7 +21,8 @@
     "url": "https://github.com/Wandalen/wResolver/issues"
   },
   "dependencies": {
-    "wTools": "alpha"
+    "wTools": "alpha",
+    "wselector": "alpha"
   },
   "devDependencies": {
     "eslint": "7.1.0",
