@@ -16,7 +16,7 @@
   {
     "url" : "https://github.com/Wandalen/wResolver/issues"
   },
-  "dependencies" : { "wTools" : "" },
+  "dependencies" : { "wTools" : "", "wselector": "alpha" },
   "devDependencies" : { "wresolver" : "file:.", "wTesting" : "", "eslint" : "7.1.0" },
   "keywords" : [ "wTools" ]
 }
