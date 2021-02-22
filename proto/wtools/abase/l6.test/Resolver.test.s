@@ -38,11 +38,13 @@ function trivial( test )
   }
 
   var exp = 'Hello';
+  debugger;
   var got = _.resolver.resolve
   ({
     src,
     selector : 'dir/val1',
   });
+  debugger;
   test.identical( got, exp );
 
   /* */
@@ -110,7 +112,9 @@ function resolveMultiple( test )
 
   test.case = 'first level selector';
   var expected = [ { b1 : 1, b2 : 'b2' }, { c1 : 1, c2 : 'c2' } ];
+  debugger;
   var got = _.resolve( src, [ 'b', 'c' ] );
+  debugger;
   test.identical( got, expected );
   test.true( got[ 0 ] === src.b );
   test.true( got[ 1 ] === src.c );
@@ -208,33 +212,6 @@ function resolveComposite( test )
     c : { c1 : false, c2 : [ 'c21', 'c22' ] },
     complex : { bools : [ true, false ], string : 'is', numbers : [ 1, 3 ], strings : [ 'or', 'and' ], empty : [] },
   }
-
-  function onSelectorReplicate( o )
-  {
-    let it = this;
-    let selector = o.selector;
-
-    debugger;
-
-    if( !_.strIs( selector ) )
-    return;
-
-    let selector2 = _.strSplit( selector, [ '{', '}' ] );
-
-    if( selector2.length < 5 )
-    return;
-
-    if( selector2.length === 5 )
-    if( selector2[ 0 ] === '' && selector2[ 1 ] === '{' && selector2[ 3 ] === '}' && selector2[ 4 ] === '' )
-    return selector2[ 2 ];
-
-    selector2 = _.strSplitsCoupledGroup({ splits : selector2, prefix : '{', postfix : '}' });
-    selector2 = selector2.map( ( els ) => _.arrayIs( els ) ? els.join( '' ) : els );
-
-    return selector2;
-  }
-
-  /* */
 
   /* */
 
@@ -361,6 +338,33 @@ function resolveComposite( test )
   test.identical( got, expected );
 
   // complex : { bools : [ true, false ], string : 'is', numbers : [ 1, 3 ], strings : [ 'or', 'and' ] },
+
+  /* */
+
+  function onSelectorReplicate( o )
+  {
+    let it = this;
+    let selector = o.selector;
+
+    debugger;
+
+    if( !_.strIs( selector ) )
+    return;
+
+    let selector2 = _.strSplit( selector, [ '{', '}' ] );
+
+    if( selector2.length < 5 )
+    return;
+
+    if( selector2.length === 5 )
+    if( selector2[ 0 ] === '' && selector2[ 1 ] === '{' && selector2[ 3 ] === '}' && selector2[ 4 ] === '' )
+    return selector2[ 2 ];
+
+    selector2 = _.strSplitsCoupledGroup({ splits : selector2, prefix : '{', postfix : '}' });
+    selector2 = selector2.map( ( els ) => _.arrayIs( els ) ? els.join( '' ) : els );
+
+    return selector2;
+  }
 
 }
 
