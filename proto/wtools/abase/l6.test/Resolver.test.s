@@ -38,13 +38,11 @@ function trivial( test )
   }
 
   var exp = 'Hello';
-  debugger;
   var got = _.resolver.resolve
   ({
     src,
     selector : 'dir/val1',
   });
-  debugger;
   test.identical( got, exp );
 
   /* */
@@ -112,9 +110,7 @@ function resolveMultiple( test )
 
   test.case = 'first level selector';
   var expected = [ { b1 : 1, b2 : 'b2' }, { c1 : 1, c2 : 'c2' } ];
-  debugger;
   var got = _.resolve( src, [ 'b', 'c' ] );
-  debugger;
   test.identical( got, expected );
   test.true( got[ 0 ] === src.b );
   test.true( got[ 1 ] === src.c );
@@ -195,6 +191,45 @@ function resolveMultiple( test )
   /* */
 
   test.close( 'map' );
+
+  /* - */
+
+}
+
+//
+
+function resolveIteratorResult( test )
+{
+
+  var src =
+  {
+    a : { map : { name : 'name1' }, value : 13 },
+    b : { b1 : 1, b2 : 'b2' },
+    c : { c1 : 1, c2 : 'c2' },
+  }
+
+  /* */
+
+  test.case = 'control';
+  var expected = [ 'b2', { a : { c1 : 1, c2 : 'c2' }, b : { name : 'name1' } } ];
+  var got = _.resolve( src, [ 'b/b2', { a : 'c', b : 'a/map' } ] );
+  test.identical( got, expected );
+  test.true( got[ 0 ] === src.b.b2 );
+  test.true( got[ 1 ][ 'a' ] === src.c );
+  test.true( got[ 1 ][ 'b' ] === src.a.map );
+
+  /* */
+
+  test.case = 'iterator.result';
+  var expected = [ 'b2', { a : { c1 : 1, c2 : 'c2' }, b : { name : 'name1' } } ];
+  var it = _.resolve.head( _.resolve, [ src, [ 'b/b2', { a : 'c', b : 'a/map' } ] ] );
+  var got = it.start();
+  test.true( got === it );
+  test.identical( it.result, expected );
+  var got = it.result;
+  test.true( got[ 0 ] === src.b.b2 );
+  test.true( got[ 1 ][ 'a' ] === src.c );
+  test.true( got[ 1 ][ 'b' ] === src.a.map );
 
   /* - */
 
@@ -345,8 +380,6 @@ function resolveComposite( test )
   {
     let it = this;
     let selector = o.selector;
-
-    debugger;
 
     if( !_.strIs( selector ) )
     return;
@@ -1208,6 +1241,7 @@ let Self =
 
     trivial,
     resolveMultiple,
+    resolveIteratorResult,
     resolveComposite,
     resolveDecoratedFixes,
     resolveDecoratedInfix,

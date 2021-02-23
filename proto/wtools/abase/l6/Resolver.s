@@ -39,7 +39,7 @@ _.assert( !!_realGlobal_ );
 // declare looker
 // --
 
-var Defaults = _.mapExtend( null, _.selector.select.body.defaults );
+let Defaults = _.mapExtend( null, _.selector.select.body.defaults );
 
 Defaults.root = null;
 Defaults.onSelectorUp = null;
@@ -51,9 +51,10 @@ Defaults.compositeSelecting = 0;
 
 //
 
-var looker =
+let LookerResolverReplicator =
 {
   constructor : function ResolverReplicator(){},
+  head,
   optionsFromArguments,
   optionsForm,
   optionsToIteration,
@@ -62,18 +63,19 @@ var looker =
   _select,
 }
 
-var iterator =
+let IteratorResolverReplicator =
 {
   resolve1Options : null, /* xxx : remove? */
   srcForSelect : null,
   optionsForSelect : null,
+  result : null,
 }
 
-var iteration =
+let IterationResolverReplicator =
 {
 }
 
-var iterationPreserve =
+let IterationPreserveResolverReplicator =
 {
   composite : false,
   compositeRoot : null,
@@ -83,38 +85,42 @@ let ResolverReplicator = _.looker.make
 ({
   name : 'ResolverReplicator',
   parent : _.Replicator,
-  looker,
-  iterator,
-  iteration,
-  iterationPreserve,
+  looker : LookerResolverReplicator,
+  iterator : IteratorResolverReplicator,
+  iteration : IterationResolverReplicator,
+  iterationPreserve : IterationPreserveResolverReplicator,
 });
 
 //
 
-var looker =
+let SelectorDefaults = _.mapExtend( null, _.selector.select.body.defaults );
+
+SelectorDefaults.replicateIteration = null;
+SelectorDefaults.resolve1Options = null;
+SelectorDefaults.srcForSelect = null;
+SelectorDefaults.compositeSelecting = null;
+
+let LookerResolverSelector =
 {
   constructor : function ResolverSelector(){},
-  // optionsFromArguments,
-  // optionsForm,
-  // optionsToIteration,
   optionsSelectFrom, /* xxx : introduce optionsForm for Selector? */
   _replicate,
   _select,
 
 }
 
-var iterator =
+let IteratorResolverSelector =
 {
   replicateIteration : null,
   resolve1Options : null,
   srcForSelect : null,
 }
 
-var iteration =
+let IterationResolverSelector =
 {
 }
 
-var iterationPreserve =
+let IterationPreserveResolverSelector =
 {
   composite : false,
   compositeRoot : null,
@@ -124,11 +130,21 @@ let ResolverSelector = _.looker.make
 ({
   name : 'ResolverSelector',
   parent : _.Selector,
-  looker,
-  iterator,
-  iteration,
-  iterationPreserve,
+  looker : LookerResolverSelector,
+  iterator : IteratorResolverSelector,
+  iteration : IterationResolverSelector,
+  iterationPreserve : IterationPreserveResolverSelector,
 });
+
+// let ResolverSelector = _.looker.make
+// ({
+//   name : 'ResolverSelector',
+//   parent : _.Selector,
+//   looker,
+//   iterator,
+//   iteration,
+//   iterationPreserve,
+// });
 
 /* xxx : use make */
 
@@ -138,13 +154,14 @@ let ResolverSelector = _.looker.make
 
 function resolve_head( routine, args )
 {
-  let o = Self.optionsFromArguments( args );
-  o.Looker = o.Looker || routine.defaults.Looker || Self;
-  _.routineOptionsPreservingUndefines( routine, o );
-  o.Looker.optionsForm( routine, o );
-  o.optionsForSelect = o.Looker.optionsSelectFrom( o );
-  let it = o.Looker.optionsToIteration( o );
-  return it;
+  return Self.head( routine, args );
+  // let o = Self.optionsFromArguments( args );
+  // o.Looker = o.Looker || routine.defaults.Looker || Self;
+  // _.routineOptionsPreservingUndefines( routine, o );
+  // o.Looker.optionsForm( routine, o );
+  // o.optionsForSelect = o.Looker.optionsSelectFrom( o );
+  // let it = o.Looker.optionsToIteration( o );
+  // return it;
 }
 
 //
@@ -168,12 +185,38 @@ _.assert( _.routineIs( defaults.onSelectorUndecorate ) );
 // extend looker
 // --
 
+function head( routine, args )
+{
+  _.assert( arguments.length === 2 );
+  let o = Self.optionsFromArguments( args );
+  if( _.routineIs( routine ) )
+  o.Looker = o.Looker || routine.defaults.Looker || Self;
+  else
+  o.Looker = o.Looker || routine.Looker || Self;
+  if( _.routineIs( routine ) ) /* xxx : remove "if" later */
+  _.routineOptionsPreservingUndefines( routine, o );
+  else
+  _.routineOptionsPreservingUndefines( null, o, routine );
+  o.Looker.optionsForm( routine, o );
+  o.optionsForSelect = o.Looker.optionsSelectFrom( o );
+  let it = o.Looker.optionsToIteration( o );
+  return it;
+  // let o = Self.optionsFromArguments( args );
+  // o.Looker = o.Looker || routine.defaults.Looker || Self;
+  // _.routineOptionsPreservingUndefines( routine, o );
+  // o.Looker.optionsForm( routine, o );
+  // let it = o.Looker.optionsToIteration( o );
+  // return it;
+}
+
+//
+
 function optionsFromArguments( args )
 {
   let o = args[ 0 ]
   if( args.length === 2 )
   {
-    debugger;
+    // debugger;
     _.assert( !_.resolver.iterationIs( args[ 0 ] ) );
     // if( _.resolver.iterationIs( args[ 0 ] ) )
     // o = { it : args[ 0 ], selector : args[ 1 ] }
@@ -434,7 +477,10 @@ function _select( visited )
   _.mapSupplement( op, _.select.defaults );
   _.Selector.optionsForm( null, op );
 
-  let it2 = op.Looker.optionsToIteration( op );
+  // debugger;
+  let it2 = op.Looker.head( null, [ op ] );
+  // let it2 = op.Looker.head( SelectorDefaults, [ op ] ); /* xxx */
+  // let it2 = op.Looker.optionsToIteration( op ); /* yyy */
 
   let result = it2.start();
   op.selected = true;
