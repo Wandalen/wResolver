@@ -198,7 +198,7 @@ function resolveMultiple( test )
 
 //
 
-function resolveIteratorResult( test )
+function iteratorResult( test )
 {
 
   var src =
@@ -1241,7 +1241,7 @@ let Self =
 
     trivial,
     resolveMultiple,
-    resolveIteratorResult,
+    iteratorResult,
     resolveComposite,
     resolveDecoratedFixes,
     resolveDecoratedInfix,
