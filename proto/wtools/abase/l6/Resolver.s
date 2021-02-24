@@ -48,14 +48,13 @@ Defaults.onSelectorReplicate = onSelectorReplicate;
 Defaults.onSelectorUndecorate = _.selector.onSelectorUndecorate;
 Defaults.recursive = 0;
 Defaults.compositeSelecting = 0;
-// Defaults.ResolverSelector = null;
 
 //
 
 let SelectorDefaults = _.mapExtend( null, _.selector.select.body.defaults );
 
 SelectorDefaults.replicateIteration = null;
-SelectorDefaults.resolve1Options = null;
+// SelectorDefaults.resolve1Options = null;
 SelectorDefaults.srcForSelect = null;
 SelectorDefaults.compositeSelecting = null;
 
@@ -97,7 +96,7 @@ function head( routine, args )
   o.Looker = o.Looker || routine.defaults.Looker || Self;
   else
   o.Looker = o.Looker || routine.Looker || Self;
-  if( _.routineIs( routine ) ) /* xxx : remove "if" later */
+  if( _.routineIs( routine ) ) /* zzz : remove "if" later */
   _.routineOptionsPreservingUndefines( routine, o );
   else
   _.routineOptionsPreservingUndefines( null, o, routine );
@@ -155,7 +154,7 @@ function optionsForm( routine, o )
 
   }
 
-  o.resolve1Options = o;
+  // o.resolve1Options = o;
   o.srcForSelect = o.src;
   o.resolvingRecursive = o.recursive;
   o.recursive = Infinity;
@@ -172,7 +171,6 @@ function optionsForm( routine, o )
     let visited = [];
     let counter = 0;
 
-    // debugger;
     selector = o.onSelectorReplicate.call( it, { selector : it.src, counter } );
 
     do
@@ -191,7 +189,7 @@ function optionsForm( routine, o )
           selector = o.onSelectorReplicate.call( it, { selector : single.result, counter } );
           if( selector === undefined )
           {
-            if( single.selected )
+            if( single.done )
             it.dst = single.result;
             it.continue = false;
             it.dstMaking = false; /* zzz */
@@ -199,7 +197,7 @@ function optionsForm( routine, o )
         }
         else
         {
-          if( single.selected )
+          if( single.done )
           it.dst = single.result;
           it.continue = false;
           it.dstMaking = false; /* zzz */
@@ -249,10 +247,11 @@ function optionsForm( routine, o )
 
 function optionsToIteration( o )
 {
-  // debugger;
   let it = Parent.optionsToIteration.call( this, o );
   _.assert( it.compositeRoot !== undefined );
-  _.assert( it.resolve1Options !== undefined );
+  _.assert( it.resolve1Options === undefined );
+  // _.assert( it.resolve1Options !== undefined );
+  // _.assert( it.resolve1Options === it.iterator );
   _.assert( it.replicateIteration === undefined );
   _.assert( it.recursive === Infinity );
   return it;
@@ -268,11 +267,9 @@ function optionsSelectFrom( o )
   _.assert( !!o.Looker.ResolverSelector );
 
   let single = _.mapExtend( null, o );
-  // single.replicateIteration = it;
   single.replicateIteration = null;
   single.selector = null;
   single.visited = null;
-  // single.selected = false; /* yyy */
   single.src = o.srcForSelect;
   single.Looker = o.Looker.ResolverSelector;
 
@@ -285,11 +282,9 @@ function optionsSelectFrom( o )
   delete single.onSelectorReplicate;
   delete single.dst;
   delete single.root;
-  // delete single.compositeSelecting;
-  // delete single.compositePrefix;
-  // delete single.compositePostfix;
 
-  _.assert( !single.it || single.it.constructor === Self.constructor );
+  _.assert( !single.it );
+  // _.assert( !single.it || single.it.constructor === Self.constructor );
 
   return single;
 }
@@ -336,12 +331,14 @@ function _replicate()
 
   _.assert( arguments.length === 0 );
   _.assert( it.compositeRoot !== undefined );
-  _.assert( it.resolve1Options !== undefined );
+  // _.assert( it.resolve1Options !== undefined );
+  _.assert( it.resolve1Options === undefined );
 
   it.start();
 
   _.assert( it.compositeRoot !== undefined );
-  _.assert( it.resolve1Options !== undefined );
+  // _.assert( it.resolve1Options !== undefined );
+  _.assert( it.resolve1Options === undefined );
 
   return it.dst;
 }
@@ -355,13 +352,13 @@ function _select( visited )
   _.assert( _.strIs( it.src ) );
   _.assert( arguments.length === 1 );
 
+  if( _.longHas( visited, it.src ) )
+  return op;
+
   let op = _.mapExtend( null, it.optionsForSelect ); /* xxx : optimize */
   op.replicateIteration = it;
   op.selector = it.src;
   op.visited = visited;
-
-  if( _.longHas( visited, op.selector ) )
-  return op;
 
   _.assert( _.strIs( op.selector ) );
   _.assert( !_.longHas( visited, op.selector ), () => `Loop selecting ${op.selector}` );
@@ -379,19 +376,7 @@ function _select( visited )
   debugger;
 
   _.assert( it2.iterator === op );
-  // _.assert( _.boolIs( op.iterator.selected ) );
-
-  // let it2 = op.Looker.head( op.Looker.makeAndLook, [ op ] );
-  //
-  // // _.mapSupplement( op, _.select.defaults );
-  // // _.Selector.optionsForm( null, op );
-  // // let it2 = op.Looker.head( null, [ op ] );
-  //
-  // let result = it2.start();
-  //
-  // debugger;
-  op.selected = true;
-  // /* xxx : move to start */
+  _.assert( _.boolIs( op.iterator.done ) );
 
   return op;
 }
@@ -529,7 +514,7 @@ let LookerResolverSelector =
 let IteratorResolverSelector =
 {
   replicateIteration : null,
-  resolve1Options : null,
+  // resolve1Options : null,
   srcForSelect : null,
 }
 
@@ -577,7 +562,7 @@ let LookerResolverReplicator =
 
 let IteratorResolverReplicator =
 {
-  resolve1Options : null, /* xxx : remove? */
+  // resolve1Options : null, /* xxx : remove? */
   srcForSelect : null,
   optionsForSelect : null,
   result : null,
