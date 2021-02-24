@@ -374,9 +374,9 @@ function _select( visited )
   op.Looker = it.ResolverSelector;
   _.assert( _.routineIs( op.Looker.makeAndLook ) );
 
-  // debugger;
+  debugger;
   let it2 = op.Looker.makeAndLook( op );
-  // debugger;
+  debugger;
 
   _.assert( it2.iterator === op );
   // _.assert( _.boolIs( op.iterator.selected ) );
