@@ -218,18 +218,34 @@ function iteratorResult( test )
   test.true( got[ 1 ][ 'a' ] === src.c );
   test.true( got[ 1 ][ 'b' ] === src.a.map );
 
+  var expected =
+  {
+    a : { map : { name : 'name1' }, value : 13 },
+    b : { b1 : 1, b2 : 'b2' },
+    c : { c1 : 1, c2 : 'c2' },
+  }
+  test.identical( src, expected );
+
   /* */
 
   test.case = 'iterator.result';
   var expected = [ 'b2', { a : { c1 : 1, c2 : 'c2' }, b : { name : 'name1' } } ];
   var it = _.resolve.head( _.resolve, [ src, [ 'b/b2', { a : 'c', b : 'a/map' } ] ] );
-  var got = it.start();
+  var got = it.perform();
   test.true( got === it );
   test.identical( it.result, expected );
   var got = it.result;
   test.true( got[ 0 ] === src.b.b2 );
   test.true( got[ 1 ][ 'a' ] === src.c );
   test.true( got[ 1 ][ 'b' ] === src.a.map );
+
+  var expected =
+  {
+    a : { map : { name : 'name1' }, value : 13 },
+    b : { b1 : 1, b2 : 'b2' },
+    c : { c1 : 1, c2 : 'c2' },
+  }
+  test.identical( src, expected );
 
   /* - */
 

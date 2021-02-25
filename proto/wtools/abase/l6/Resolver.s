@@ -101,7 +101,7 @@ function head( routine, args )
   else
   _.routineOptionsPreservingUndefines( null, o, routine );
   o.Looker.optionsForm( routine, o );
-  o.optionsForSelect = o.Looker.optionsSelectFrom( o );
+  o.optionsForSelect = o.Looker.optionsForSelectFrom( o );
   let it = o.Looker.optionsToIteration( o );
   return it;
 }
@@ -259,34 +259,33 @@ function optionsToIteration( o )
 
 //
 
-function optionsSelectFrom( o )
+function optionsForSelectFrom( o )
 {
   let it = this;
 
   _.assert( _.aux.is( o ) );
   _.assert( !!o.Looker.ResolverSelector );
 
-  let single = _.mapExtend( null, o );
-  single.replicateIteration = null;
-  single.selector = null;
-  single.visited = null;
-  single.src = o.srcForSelect;
-  single.Looker = o.Looker.ResolverSelector;
+  let o2 = _.mapExtend( null, o );
+  o2.replicateIteration = null;
+  o2.selector = null;
+  o2.visited = null;
+  o2.src = o.srcForSelect;
+  o2.Looker = o.Looker.ResolverSelector;
 
-  delete single.resolvingRecursive;
-  delete single.recursive;
-  delete single.onUp;
-  delete single.onDown;
-  delete single.onSelectorUp;
-  delete single.onSelectorDown;
-  delete single.onSelectorReplicate;
-  delete single.dst;
-  delete single.root;
+  delete o2.resolvingRecursive;
+  delete o2.recursive;
+  delete o2.onUp;
+  delete o2.onDown;
+  delete o2.onSelectorUp;
+  delete o2.onSelectorDown;
+  delete o2.onSelectorReplicate;
+  delete o2.dst;
+  delete o2.root;
 
-  _.assert( !single.it );
-  // _.assert( !single.it || single.it.constructor === Self.constructor );
+  _.assert( !o2.it );
 
-  return single;
+  return o2;
 }
 
 //
@@ -334,7 +333,7 @@ function _replicate()
   // _.assert( it.resolve1Options !== undefined );
   _.assert( it.resolve1Options === undefined );
 
-  it.start();
+  it.perform();
 
   _.assert( it.compositeRoot !== undefined );
   // _.assert( it.resolve1Options !== undefined );
@@ -369,16 +368,16 @@ function _select( visited )
   _.assert( !!it.ResolverSelector );
 
   op.Looker = it.ResolverSelector;
-  _.assert( _.routineIs( op.Looker.makeAndLook ) );
+  _.assert( _.routineIs( op.Looker.performMaking ) );
 
-  debugger;
-  let it2 = op.Looker.makeAndLook( op );
-  debugger;
+  // debugger;
+  let it2 = op.Looker.performMaking( op );
+  // debugger;
 
   _.assert( it2.iterator === op );
   _.assert( _.boolIs( op.iterator.done ) );
 
-  return op;
+  return it2;
 }
 
 //
@@ -504,7 +503,7 @@ function onSelectorDownComposite( fop )
 let LookerResolverSelector =
 {
   constructor : function ResolverSelector(){},
-  optionsSelectFrom,
+  optionsForSelectFrom,
   /* xxx : introduce optionsForm for Selector? */
   /* xxx : head */
   _replicate,
@@ -528,7 +527,7 @@ let IterationPreserveResolverSelector =
   compositeRoot : null,
 }
 
-let ResolverSelector = _.looker.make
+let ResolverSelector = _.looker.define
 ({
   name : 'ResolverSelector',
   parent : _.Selector,
@@ -539,8 +538,8 @@ let ResolverSelector = _.looker.make
   iterationPreserve : IterationPreserveResolverSelector,
 });
 
-_.assert( ResolverSelector.makeAndLook.defaults.missingAction !== undefined );
-_.assert( ResolverSelector.makeAndLook.defaults.replicateIteration !== undefined );
+_.assert( ResolverSelector.performMaking.defaults.missingAction !== undefined );
+_.assert( ResolverSelector.performMaking.defaults.replicateIteration !== undefined );
 
 /* xxx : pass defaults */
 
@@ -550,11 +549,11 @@ let LookerResolverReplicator =
 {
   constructor : function ResolverReplicator(){},
   head,
-  makeAndLook : resolve,
+  performMaking : resolve,
   optionsFromArguments,
   optionsForm,
   optionsToIteration,
-  optionsSelectFrom,
+  optionsForSelectFrom,
   _replicate,
   _select,
   ResolverSelector,
@@ -578,7 +577,7 @@ let IterationPreserveResolverReplicator =
   compositeRoot : null,
 }
 
-let ResolverReplicator = _.looker.make
+let ResolverReplicator = _.looker.define
 ({
   name : 'ResolverReplicator',
   parent : _.Replicator,
@@ -588,6 +587,14 @@ let ResolverReplicator = _.looker.make
   iteration : IterationResolverReplicator,
   iterationPreserve : IterationPreserveResolverReplicator,
 });
+
+//
+
+ResolverReplicator.ResolverSelector = ResolverSelector;
+ResolverReplicator.ResolverReplicator = ResolverReplicator;
+
+ResolverSelector.ResolverSelector = ResolverSelector;
+ResolverSelector.ResolverReplicator = ResolverReplicator;
 
 //
 
@@ -611,7 +618,7 @@ let ResolverExtension =
   is : _.looker.is,
   iteratorIs : _.looker.iteratorIs,
   iterationIs : _.looker.iterationIs,
-  make : _.looker.make,
+  make : _.looker.define,
 
   Resolver : ResolverReplicator,
   ResolverReplicator,
