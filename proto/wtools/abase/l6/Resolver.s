@@ -29,7 +29,7 @@ if( typeof module !== 'undefined' )
 
 let _global = _global_;
 let _ = _global_.wTools;
-let Parent = _.Replicator;
+let Parent = _.replicator.Replicator;
 _.resolver = _.resolver || Object.create( null );
 _.resolver.functor = _.resolver.functor || Object.create( null );
 
@@ -55,7 +55,7 @@ let SelectorDefaults = _.mapExtend( null, _.selector.select.body.defaults );
 
 SelectorDefaults.replicateIteration = null;
 // SelectorDefaults.resolve1Options = null;
-SelectorDefaults.srcForSelect = null;
+// SelectorDefaults.srcForSelect = null;
 SelectorDefaults.compositeSelecting = null;
 
 // --
@@ -74,8 +74,11 @@ function resolve_body( o )
   let it = o;
   _.assert( !o.recursive || !!o.onSelectorReplicate, () => 'For recursive selection onSelectorReplicate should be defined' );
   _.assert( it.Looker.iterationProper( it ) );
-  let result = it._replicate();
-  return it.dst;
+  // let result = it._replicate();
+  it.perform();
+  debugger;
+  return it.result;
+  // return it.dst;
 }
 
 _.routineExtend( resolve_body, _.selector.select.body );
@@ -273,6 +276,7 @@ function optionsForSelectFrom( o )
   o2.src = o.srcForSelect;
   o2.Looker = o.Looker.ResolverSelector;
 
+  delete o2.srcForSelect;
   delete o2.resolvingRecursive;
   delete o2.recursive;
   delete o2.onUp;
@@ -322,24 +326,51 @@ function optionsForSelectFrom( o )
 
 let resolve = _.routineUnite( resolve_head, resolve_body );
 
+// //
+//
+// function _replicate()
+// {
+//   let it = this;
+//
+//   _.assert( arguments.length === 0 );
+//   _.assert( it.compositeRoot !== undefined );
+//   // _.assert( it.resolve1Options !== undefined );
+//   _.assert( it.resolve1Options === undefined );
+//
+//   it.perform();
+//
+//   _.assert( it.compositeRoot !== undefined );
+//   // _.assert( it.resolve1Options !== undefined );
+//   _.assert( it.resolve1Options === undefined );
+//
+//   return it.dst;
+// }
+
 //
 
-function _replicate()
+function performBegin()
 {
   let it = this;
+  Parent.performBegin.apply( it, arguments );
 
   _.assert( arguments.length === 0 );
   _.assert( it.compositeRoot !== undefined );
-  // _.assert( it.resolve1Options !== undefined );
   _.assert( it.resolve1Options === undefined );
 
-  it.perform();
+  return it;
+}
+
+//
+
+function performEnd()
+{
+  let it = this;
 
   _.assert( it.compositeRoot !== undefined );
-  // _.assert( it.resolve1Options !== undefined );
   _.assert( it.resolve1Options === undefined );
 
-  return it.dst;
+  Parent.performEnd.apply( it, arguments );
+  return it;
 }
 
 //
@@ -506,15 +537,15 @@ let LookerResolverSelector =
   optionsForSelectFrom,
   /* xxx : introduce optionsForm for Selector? */
   /* xxx : head */
-  _replicate,
-  _select,
+  // _replicate,
+  // _select,
 }
 
 let IteratorResolverSelector =
 {
   replicateIteration : null,
   // resolve1Options : null,
-  srcForSelect : null,
+  // srcForSelect : null,
 }
 
 let IterationResolverSelector =
@@ -554,7 +585,9 @@ let LookerResolverReplicator =
   optionsForm,
   optionsToIteration,
   optionsForSelectFrom,
-  _replicate,
+  // _replicate,
+  performBegin,
+  performEnd,
   _select,
   ResolverSelector,
 }
@@ -580,7 +613,7 @@ let IterationPreserveResolverReplicator =
 let ResolverReplicator = _.looker.define
 ({
   name : 'ResolverReplicator',
-  parent : _.Replicator,
+  parent : _.replicator.Replicator,
   defaults : Defaults,
   looker : LookerResolverReplicator,
   iterator : IteratorResolverReplicator,
@@ -610,15 +643,17 @@ var FunctorExtension =
 let ResolverExtension =
 {
 
+  // is : _.looker.is,
+  // iteratorIs : _.looker.iteratorIs,
+  // iterationIs : _.looker.iterationIs,
+  // define : _.looker.define,
+
+  ... _.replicator,
+
   resolve,
 
   onSelectorReplicate,
   composite,
-
-  is : _.looker.is,
-  iteratorIs : _.looker.iteratorIs,
-  iterationIs : _.looker.iterationIs,
-  make : _.looker.define,
 
   Resolver : ResolverReplicator,
   ResolverReplicator,
@@ -629,10 +664,6 @@ let ResolverExtension =
 let ToolsExtension =
 {
 
-  // /* xxx : remove from the namespace */
-  // Resolver : ResolverReplicator,
-  // ResolverReplicator,
-  // ResolverSelector,
   resolve,
 
 }
