@@ -58,6 +58,8 @@ SelectorDefaults.replicateIteration = null;
 // SelectorDefaults.srcForSelect = null;
 SelectorDefaults.compositeSelecting = null;
 
+/* xxx : it.iterator.dst should be undefined */
+
 // --
 // extend looker
 // --
@@ -184,7 +186,9 @@ function optionsForm( routine, o )
         it.src = selector;
         it.iterable = null;
         it.srcChanged();
+        _.debugger;
         let single = it._select( visited );
+        _.debugger;
         selector = undefined;
         if( single.result !== undefined && o.resolvingRecursive && visited.length <= o.resolvingRecursive )
         {
