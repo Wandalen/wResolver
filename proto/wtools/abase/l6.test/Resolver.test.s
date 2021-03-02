@@ -136,12 +136,20 @@ function resolveMultiple( test )
 
   /* */
 
-  test.case = 'self and empty selectors';
+  test.case = 'self selector';
   var expected = [ 'b2', { a : src } ];
-  var got = _.resolve( src, [ 'b/b2', { a : '/', b : '' } ] );
+  var got = _.resolve( src, [ 'b/b2', { a : '/' } ] );
   test.identical( got, expected );
   test.true( got[ 1 ].a === src );
   test.true( got.length === 2 );
+
+  // xxx yyy
+  // test.case = 'self and empty selectors';
+  // var expected = [ 'b2', { a : src } ];
+  // var got = _.resolve( src, [ 'b/b2', { a : '/', b : '' } ] );
+  // test.identical( got, expected );
+  // test.true( got[ 1 ].a === src );
+  // test.true( got.length === 2 );
 
   /* */
 
@@ -181,12 +189,20 @@ function resolveMultiple( test )
 
   /* */
 
-  test.case = 'self and empty selectors';
+  test.case = 'self selector';
   var expected = { array : [ src ] };
-  var got = _.resolve( src, { b : '', array : [ '/', '' ] } );
+  var got = _.resolve( src, { array : [ '/' ] } );
   test.identical( got, expected );
   test.true( got.array[ 0 ] === src );
   test.true( got.array.length === 1 );
+
+  // xxx yyy
+  // test.case = 'self and empty selectors';
+  // var expected = { array : [ src ] };
+  // var got = _.resolve( src, { b : '', array : [ '/', '' ] } );
+  // test.identical( got, expected );
+  // test.true( got.array[ 0 ] === src );
+  // test.true( got.array.length === 1 );
 
   /* */
 
@@ -1195,19 +1211,71 @@ function resolveRecursive( test )
   /* */
 
   test.case = 'error';
-  test.shouldThrowErrorSync( () =>
+
+  var src =
   {
-    var got = _.resolve
-    ({
-      src,
-      selector : '{result::dir/userX} !',
-      compositeSelecting : 1,
-      recursive : Infinity,
-      onSelectorReplicate : _.resolver.functor.onSelectorReplicateComposite({ onSelectorReplicate }),
-      onSelectorUndecorate,
-      missingAction : 'throw',
-    });
-  });
+    var :
+    {
+      dir :
+      {
+        x : 13,
+      }
+    },
+    about :
+    {
+      user : 'user1',
+    },
+    result :
+    {
+      dir :
+      {
+        userX : '{::about/::user} - {::var/::dir/::x}'
+      }
+    },
+  }
+
+  // debugger;
+  // var got = _.resolve
+  // ({
+  //   src,
+  //   selector : '{result::dir/userX} !',
+  //   compositeSelecting : 1,
+  //   recursive : Infinity,
+  //   onSelectorReplicate : _.resolver.functor.onSelectorReplicateComposite({ onSelectorReplicate }),
+  //   onSelectorUndecorate,
+  //   missingAction : 'throw',
+  // });
+  // debugger;
+  // test.identical( got, 'xxx' );
+  // debugger;
+
+  /* xxx : write test checking such error in Selector */
+  test.shouldThrowErrorSync
+  (
+    () =>
+    {
+      var got = _.resolve
+      ({
+        src,
+        selector : '{result::dir/userX} !',
+        compositeSelecting : 1,
+        recursive : Infinity,
+        onSelectorReplicate : _.resolver.functor.onSelectorReplicateComposite({ onSelectorReplicate }),
+        onSelectorUndecorate,
+        missingAction : 'throw',
+      });
+    },
+    ( err ) =>
+    {
+      let exp =
+`
+      Cant select result::dir/userX from {- Map.polluted with 3 elements -}
+        because 'result::dir' does not exist
+        fall at "/"
+`
+      test.equivalent( err.originalMessage, exp );
+    }
+  );
 
   /* */
 
@@ -1237,6 +1305,70 @@ function resolveRecursive( test )
 
 }
 
+//
+
+function resolveOptionMissingAction( test )
+{
+
+  act({ missingAction : 'ignore' });
+  act({ missingAction : 'undefine' });
+  act({ missingAction : 'error' });
+  actThrowing({ missingAction : 'throw' });
+
+  /* - */
+
+  function act( env )
+  {
+
+    /* */
+
+    test.case = 'trivial';
+    var src =
+    {
+      b : { b1 : 1, b2 : '1' },
+      c : { c1 : 1, c2 : '2' },
+    }
+    var expected = undefined;
+    var options =
+    {
+      src,
+      selector : 'd',
+      missingAction : env.missingAction,
+    }
+    var got = _.resolve( options );
+    if( env.missinAction === 'error' )
+    test.true( _.errIs( got ) );
+    else
+    test.identical( got, expected );
+
+    /* */
+
+  }
+
+  /* - */
+
+  function actThrowing( env )
+  {
+
+    /* */
+
+    test.shouldThrowErrorSync( () =>
+    {
+      var options =
+      {
+        src,
+        selector : 'd',
+        missingAction : env.missingAction,
+      }
+      var got = _.resolve( options );
+    });
+
+    /* */
+
+  }
+
+}
+
 // --
 // declare
 // --
@@ -1262,6 +1394,7 @@ let Self =
     resolveDecoratedFixes,
     resolveDecoratedInfix,
     resolveRecursive,
+    resolveOptionMissingAction,
 
   }
 

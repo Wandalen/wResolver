@@ -46,6 +46,7 @@ Defaults.onSelectorUp = null;
 Defaults.onSelectorDown = null;
 Defaults.onSelectorReplicate = onSelectorReplicate;
 Defaults.onSelectorUndecorate = _.selector.onSelectorUndecorate;
+Defaults.onQuantitativeFail = null;
 Defaults.recursive = 0;
 Defaults.compositeSelecting = 0;
 
@@ -54,9 +55,7 @@ Defaults.compositeSelecting = 0;
 let SelectorDefaults = _.mapExtend( null, _.selector.select.body.defaults );
 
 SelectorDefaults.replicateIteration = null;
-// SelectorDefaults.resolve1Options = null;
-// SelectorDefaults.srcForSelect = null;
-SelectorDefaults.compositeSelecting = null;
+// SelectorDefaults.compositeSelecting = null; /* yyy */
 
 /* xxx : it.iterator.dst should be undefined */
 
@@ -74,13 +73,9 @@ function resolve_head( routine, args )
 function resolve_body( o )
 {
   let it = o;
-  _.assert( !o.recursive || !!o.onSelectorReplicate, () => 'For recursive selection onSelectorReplicate should be defined' );
   _.assert( it.Looker.iterationProper( it ) );
-  // let result = it._replicate();
   it.perform();
-  debugger;
   return it.result;
-  // return it.dst;
 }
 
 _.routineExtend( resolve_body, _.selector.select.body );
@@ -106,7 +101,7 @@ function head( routine, args )
   else
   _.routineOptionsPreservingUndefines( null, o, routine );
   o.Looker.optionsForm( routine, o );
-  o.optionsForSelect = o.Looker.optionsForSelectFrom( o );
+  o.optionsForSelect = o.Looker.selectorOptionsForSelectFrom( o );
   let it = o.Looker.optionsToIteration( o );
   return it;
 }
@@ -136,8 +131,9 @@ function optionsForm( routine, o )
   Parent.optionsForm.call( this, routine, o );
 
   _.assert( _.mapIs( o ) );
+  _.assert( !o.recursive || !!o.onSelectorReplicate, () => 'For recursive selection onSelectorReplicate should be defined' );
 
-  const onUp2 = o.onUp;
+  const onUp2 = o.onUp; /* xxx : write down to o? */
   const onDown2 = o.onDown;
 
   if( o.root === null )
@@ -159,7 +155,6 @@ function optionsForm( routine, o )
 
   }
 
-  // o.resolve1Options = o;
   o.srcForSelect = o.src;
   o.resolvingRecursive = o.recursive;
   o.recursive = Infinity;
@@ -172,6 +167,7 @@ function optionsForm( routine, o )
   function onUp()
   {
     let it = this;
+    _.assert( !it.rit );
     let selector
     let visited = [];
     let counter = 0;
@@ -186,33 +182,31 @@ function optionsForm( routine, o )
         it.src = selector;
         it.iterable = null;
         it.srcChanged();
-        _.debugger;
-        let single = it._select( visited );
-        _.debugger;
+        let sit = it._select( visited );
         selector = undefined;
-        if( single.result !== undefined && o.resolvingRecursive && visited.length <= o.resolvingRecursive )
+        if( sit.result !== undefined && o.resolvingRecursive && visited.length <= o.resolvingRecursive )
         {
           counter += 1;
-          selector = o.onSelectorReplicate.call( it, { selector : single.result, counter } );
+          selector = o.onSelectorReplicate.call( it, { selector : sit.result, counter } );
           if( selector === undefined )
           {
-            if( single.done )
-            it.dst = single.result;
+            if( !sit.error )
+            it.dst = sit.result;
             it.continue = false;
             it.dstMaking = false; /* zzz */
           }
         }
         else
         {
-          if( single.done )
-          it.dst = single.result;
+          if( !sit.error )
+          it.dst = sit.result;
           it.continue = false;
           it.dstMaking = false; /* zzz */
         }
       }
       else if( selector !== undefined )
       {
-        if( selector && selector.composite === _.resolver.composite )
+        if( selector && selector.composite === _.resolver.compositeSymbol )
         {
           if( !it.compositeRoot )
           it.compositeRoot = it;
@@ -257,8 +251,6 @@ function optionsToIteration( o )
   let it = Parent.optionsToIteration.call( this, o );
   _.assert( it.compositeRoot !== undefined );
   _.assert( it.resolve1Options === undefined );
-  // _.assert( it.resolve1Options !== undefined );
-  // _.assert( it.resolve1Options === it.iterator );
   _.assert( it.replicateIteration === undefined );
   _.assert( it.recursive === Infinity );
   return it;
@@ -266,34 +258,56 @@ function optionsToIteration( o )
 
 //
 
-function optionsForSelectFrom( o )
+function iteratorMake( o )
+{
+  let iterator = _.replicator.Replicator.iteratorMake.apply( this, arguments );
+  _.assert( iterator.iteratorProper( iterator ) );
+  return iterator;
+}
+
+//
+
+function selectorOptionsForSelectFrom( o )
 {
   let it = this;
 
   _.assert( _.aux.is( o ) );
   _.assert( !!o.Looker.ResolverSelector );
+  _.assert( !!o.Looker.ResolverSelector );
 
-  let o2 = _.mapExtend( null, o );
-  o2.replicateIteration = null;
-  o2.selector = null;
-  o2.visited = null;
+  let o2 = _.mapOnly_( null, o, it.ResolverSelector.exec.defaults );
   o2.src = o.srcForSelect;
   o2.Looker = o.Looker.ResolverSelector;
+  o2.recursive = Infinity;
+  o2.onSelectorUndecorate = o.onSelectorUndecorate;
+  o2.onQuantitativeFail = o.onQuantitativeFail;
+  o2.onDownEnd = o.onDownEnd;
+  o2.onUpBegin = o.onUpBegin;
+  o2.onUpEnd = o.onUpEnd;
 
-  delete o2.srcForSelect;
-  delete o2.resolvingRecursive;
+  // o2.missingAction = 'throw'; /* yyy */
+  // debugger;
+
   delete o2.recursive;
   delete o2.onUp;
   delete o2.onDown;
-  delete o2.onSelectorUp;
-  delete o2.onSelectorDown;
-  delete o2.onSelectorReplicate;
-  delete o2.dst;
   delete o2.root;
 
   _.assert( !o2.it );
+  _.assert( !o2.iterator );
 
   return o2;
+}
+
+//
+
+function selectorIterate()
+{
+  let it = this;
+  let result = _.selector.Selector.iterate.apply( it, arguments );
+  _.assert( it.composite === undefined );
+  _.assert( it.compositeRoot === undefined );
+  return result;
 }
 
 //
@@ -330,37 +344,14 @@ function optionsForSelectFrom( o )
 
 let resolve = _.routineUnite( resolve_head, resolve_body );
 
-// //
-//
-// function _replicate()
-// {
-//   let it = this;
-//
-//   _.assert( arguments.length === 0 );
-//   _.assert( it.compositeRoot !== undefined );
-//   // _.assert( it.resolve1Options !== undefined );
-//   _.assert( it.resolve1Options === undefined );
-//
-//   it.perform();
-//
-//   _.assert( it.compositeRoot !== undefined );
-//   // _.assert( it.resolve1Options !== undefined );
-//   _.assert( it.resolve1Options === undefined );
-//
-//   return it.dst;
-// }
-
 //
 
 function performBegin()
 {
   let it = this;
   Parent.performBegin.apply( it, arguments );
-
   _.assert( arguments.length === 0 );
   _.assert( it.compositeRoot !== undefined );
-  _.assert( it.resolve1Options === undefined );
-
   return it;
 }
 
@@ -369,10 +360,7 @@ function performBegin()
 function performEnd()
 {
   let it = this;
-
   _.assert( it.compositeRoot !== undefined );
-  _.assert( it.resolve1Options === undefined );
-
   Parent.performEnd.apply( it, arguments );
   return it;
 }
@@ -386,8 +374,8 @@ function _select( visited )
   _.assert( _.strIs( it.src ) );
   _.assert( arguments.length === 1 );
 
-  if( _.longHas( visited, it.src ) )
-  return op;
+  if( _.longHas( visited, it.src ) ) /* qqq : cover please */
+  return;
 
   let op = _.mapExtend( null, it.optionsForSelect ); /* xxx : optimize */
   op.replicateIteration = it;
@@ -403,16 +391,14 @@ function _select( visited )
   _.assert( !!it.ResolverSelector );
 
   op.Looker = it.ResolverSelector;
-  _.assert( _.routineIs( op.Looker.performMaking ) );
+  _.assert( _.routineIs( op.Looker.exec ) );
 
-  // debugger;
-  let it2 = op.Looker.performMaking( op );
-  // debugger;
+  let sit = op.Looker.exec( op );
 
-  _.assert( it2.iterator === op );
-  _.assert( _.boolIs( op.iterator.done ) );
+  _.assert( sit.iterator === op );
+  _.assert( sit.iterator.state === 2 );
 
-  return it2;
+  return sit;
 }
 
 //
@@ -441,6 +427,7 @@ function onSelectorReplicateComposite( fop )
   return function onSelectorReplicateComposite( o )
   {
     let it = this;
+    _.assert( !it.rit );
     let selector = o.selector;
 
     if( !_.strIs( selector ) )
@@ -496,7 +483,7 @@ function onSelectorReplicateComposite( fop )
     });
 
     selector2 = selector2.map( ( split ) => _.arrayIs( split ) ? split.join( '' ) : split );
-    selector2.composite = _.resolver.composite;
+    selector2.composite = _.resolver.compositeSymbol;
 
     return selector2;
   }
@@ -524,7 +511,7 @@ function onSelectorDownComposite( fop )
   return function onSelectorDownComposite()
   {
     let it = this;
-    if( it.continue && _.arrayIs( it.dst ) && it.src.composite === _.resolver.composite )
+    if( it.continue && _.arrayIs( it.dst ) && it.src.composite === _.resolver.compositeSymbol )
     {
       it.dst = _.strJoin( it.dst );
     }
@@ -538,18 +525,15 @@ function onSelectorDownComposite( fop )
 let LookerResolverSelector =
 {
   constructor : function ResolverSelector(){},
-  optionsForSelectFrom,
+  selectorOptionsForSelectFrom,
+  iterate : selectorIterate,
   /* xxx : introduce optionsForm for Selector? */
   /* xxx : head */
-  // _replicate,
-  // _select,
 }
 
 let IteratorResolverSelector =
 {
   replicateIteration : null,
-  // resolve1Options : null,
-  // srcForSelect : null,
 }
 
 let IterationResolverSelector =
@@ -558,8 +542,10 @@ let IterationResolverSelector =
 
 let IterationPreserveResolverSelector =
 {
-  composite : false,
-  compositeRoot : null,
+}
+
+let ResolverSelectorPreserve =
+{
 }
 
 let ResolverSelector = _.looker.define
@@ -573,8 +559,8 @@ let ResolverSelector = _.looker.define
   iterationPreserve : IterationPreserveResolverSelector,
 });
 
-_.assert( ResolverSelector.performMaking.defaults.missingAction !== undefined );
-_.assert( ResolverSelector.performMaking.defaults.replicateIteration !== undefined );
+_.assert( ResolverSelector.exec.defaults.missingAction !== undefined );
+_.assert( ResolverSelector.exec.defaults.replicateIteration !== undefined );
 
 /* xxx : pass defaults */
 
@@ -584,12 +570,12 @@ let LookerResolverReplicator =
 {
   constructor : function ResolverReplicator(){},
   head,
-  performMaking : resolve,
+  exec : resolve,
   optionsFromArguments,
   optionsForm,
   optionsToIteration,
-  optionsForSelectFrom,
-  // _replicate,
+  iteratorMake,
+  selectorOptionsForSelectFrom,
   performBegin,
   performEnd,
   _select,
@@ -598,10 +584,9 @@ let LookerResolverReplicator =
 
 let IteratorResolverReplicator =
 {
-  // resolve1Options : null, /* xxx : remove? */
   srcForSelect : null,
   optionsForSelect : null,
-  result : null,
+  result : null, /* xxx : redundant */
 }
 
 let IterationResolverReplicator =
@@ -614,6 +599,7 @@ let IterationPreserveResolverReplicator =
   compositeRoot : null,
 }
 
+/* xxx : redefine define */
 let ResolverReplicator = _.looker.define
 ({
   name : 'ResolverReplicator',
@@ -629,13 +615,15 @@ let ResolverReplicator = _.looker.define
 
 ResolverReplicator.ResolverSelector = ResolverSelector;
 ResolverReplicator.ResolverReplicator = ResolverReplicator;
+ResolverReplicator.ResolverSelectorPreserve = ResolverSelectorPreserve;
 
 ResolverSelector.ResolverSelector = ResolverSelector;
 ResolverSelector.ResolverReplicator = ResolverReplicator;
+ResolverSelector.ResolverSelectorPreserve = ResolverSelectorPreserve;
 
 //
 
-let composite = Symbol.for( 'composite' );
+let compositeSymbol = Symbol.for( 'composite' );
 
 var FunctorExtension =
 {
@@ -647,17 +635,12 @@ var FunctorExtension =
 let ResolverExtension =
 {
 
-  // is : _.looker.is,
-  // iteratorIs : _.looker.iteratorIs,
-  // iterationIs : _.looker.iterationIs,
-  // define : _.looker.define,
-
   ... _.replicator,
 
   resolve,
 
   onSelectorReplicate,
-  composite,
+  compositeSymbol,
 
   Resolver : ResolverReplicator,
   ResolverReplicator,
@@ -676,12 +659,6 @@ let Self = ResolverReplicator;
 _.mapSupplement( _, ToolsExtension );
 _.mapSupplement( _.resolver, ResolverExtension );
 _.mapSupplement( _.resolver.functor, FunctorExtension );
-
-if( _.accessor && _.accessor.forbid )
-{
-  _.accessor.forbid( _.select, { composite : 'composite' } );
-  _.accessor.forbid( _.selector, { composite : 'composite' } );
-}
 
 // --
 // export
