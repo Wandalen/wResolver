@@ -143,7 +143,7 @@ function resolveMultiple( test )
   test.true( got[ 1 ].a === src );
   test.true( got.length === 2 );
 
-  // xxx yyy
+  // yyy
   // test.case = 'self and empty selectors';
   // var expected = [ 'b2', { a : src } ];
   // var got = _.resolve( src, [ 'b/b2', { a : '/', b : '' } ] );
@@ -196,7 +196,7 @@ function resolveMultiple( test )
   test.true( got.array[ 0 ] === src );
   test.true( got.array.length === 1 );
 
-  // xxx yyy
+  // yyy
   // test.case = 'self and empty selectors';
   // var expected = { array : [ src ] };
   // var got = _.resolve( src, { b : '', array : [ '/', '' ] } );
@@ -1234,22 +1234,6 @@ function resolveRecursive( test )
     },
   }
 
-  // debugger;
-  // var got = _.resolve
-  // ({
-  //   src,
-  //   selector : '{result::dir/userX} !',
-  //   compositeSelecting : 1,
-  //   recursive : Infinity,
-  //   onSelectorReplicate : _.resolver.functor.onSelectorReplicateComposite({ onSelectorReplicate }),
-  //   onSelectorUndecorate,
-  //   missingAction : 'throw',
-  // });
-  // debugger;
-  // test.identical( got, 'xxx' );
-  // debugger;
-
-  /* xxx : write test checking such error in Selector */
   test.shouldThrowErrorSync
   (
     () =>
@@ -1270,7 +1254,7 @@ function resolveRecursive( test )
       let exp =
 `
       Cant select result::dir/userX from {- Map.polluted with 3 elements -}
-        because 'result::dir' does not exist
+        because result::dir does not exist
         fall at "/"
 `
       test.equivalent( err.originalMessage, exp );

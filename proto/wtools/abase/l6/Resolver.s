@@ -394,7 +394,9 @@ function _select( visited )
   op.Looker = it.ResolverSelector;
   _.assert( _.routineIs( op.Looker.exec ) );
 
+  debugger;
   let sit = op.Looker.exec( op );
+  debugger;
 
   _.assert( sit.iterator === op );
   _.assert( sit.iterator.state === 2 );
@@ -518,6 +520,21 @@ function onSelectorDownComposite( fop )
     }
   }
 }
+
+// xxx
+// //
+//
+// function define(  )
+// {
+//
+//
+//
+//   // ResolverExtraReplicator.ResolverSelector = ResolverExtraSelector;
+//   // ResolverExtraReplicator.ResolverReplicator = ResolverExtraReplicator;
+//   // ResolverExtraSelector.ResolverSelector = ResolverExtraSelector;
+//   // ResolverExtraSelector.ResolverReplicator = ResolverExtraReplicator;
+//
+// }
 
 // --
 // relations
