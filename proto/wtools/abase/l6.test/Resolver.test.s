@@ -76,6 +76,7 @@ function trivial( test )
   }
 
   var exp = 'Hello from here!';
+  // debugger;
   var got = _.resolver.resolve
   ({
     src,
@@ -84,6 +85,7 @@ function trivial( test )
     onSelectorDown : _.resolver.functor.onSelectorDownComposite(),
     recursive : 10,
   });
+  // debugger;
   test.identical( got, exp );
 
   /* */
@@ -1336,6 +1338,12 @@ function resolveOptionMissingAction( test )
 
     /* */
 
+    var src =
+    {
+      b : { b1 : 1, b2 : '1' },
+      c : { c1 : 1, c2 : '2' },
+    }
+
     test.shouldThrowErrorSync( () =>
     {
       var options =
@@ -1350,6 +1358,65 @@ function resolveOptionMissingAction( test )
     /* */
 
   }
+
+}
+
+//
+
+function resolveMaybe( test )
+{
+
+  /* */
+
+  test.case = 'control';
+
+  var src =
+  {
+    b : { b1 : 1, b2 : '1' },
+    c : { c1 : 1, c2 : '2' },
+  }
+
+  test.shouldThrowErrorSync
+  (
+    () =>
+    {
+      var options =
+      {
+        src,
+        selector : 'd',
+      }
+      var got = _.resolve( options );
+    },
+    ( err ) =>
+    {
+      var exp =
+`
+Cant select d from {- Map.polluted with 2 elements -}
+  because d does not exist
+  fall at "/"
+`
+      test.equivalent( err.originalMessage, exp );
+    }
+  );
+
+  /* */
+
+  test.case = 'basic';
+  var src =
+  {
+    b : { b1 : 1, b2 : '1' },
+    c : { c1 : 1, c2 : '2' },
+  }
+  var expected = undefined;
+  var options =
+  {
+    src,
+    selector : 'd',
+  }
+  var got = _.resolver.resolveMaybe( options );
+  test.identical( got, expected );
+
+  /* */
 
 }
 
@@ -1379,6 +1446,7 @@ let Self =
     resolveDecoratedInfix,
     resolveRecursive,
     resolveOptionMissingAction,
+    resolveMaybe,
 
   }
 
