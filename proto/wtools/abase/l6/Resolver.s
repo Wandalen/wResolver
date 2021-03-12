@@ -30,19 +30,21 @@ if( typeof module !== 'undefined' )
 let _global = _global_;
 let _ = _global_.wTools;
 let Parent = _.replicator.Replicator;
-_.resolver = _.resolver || Object.create( null );
-_.resolver.functor = _.resolver.functor || Object.create( null );
+// xxx : introduce helper to redefine namespace?
+_.resolver = _.resolver || Object.create( _.replicator );
+_.resolver.functor = _.resolver.functor || Object.create( _.selector.functor );
 
 _.assert( !!_realGlobal_ );
+_.assert( !!_.selector.Selector );
+_.assert( !!_.replicator.Replicator );
 
 // --
 // relations
 // --
 
-// let Defaults = _.mapExtend( null, _.selector.select.body.defaults );
-
-let Defaults =
+let Prime =
 {
+
   ... _.mapExtend( null, _.selector.Looker.Prime ),
   ... _.mapExtend( null, _.replicator.Looker.Prime ),
 
@@ -60,11 +62,9 @@ let Defaults =
 
 //
 
-// let SelectorDefaults = _.mapExtend( null, _.selector.select.body.defaults );
-let SelectorDefaults = Object.create( null );
+let SelectorPrime = Object.create( null );
 
-SelectorDefaults.replicateIteration = null;
-// SelectorDefaults.compositeSelecting = null; /* yyy */
+SelectorPrime.replicateIteration = null;
 
 /* xxx : it.iterator.dst should be undefined */
 
@@ -102,27 +102,6 @@ SelectorDefaults.replicateIteration = null;
  * @memberof module:Tools/base/Resolver.Tools( module::Resolver )
 */
 
-// function resolve_head( routine, args )
-// {
-//   return routine.defaults.head( routine, args );
-// }
-//
-// function resolve_body( o )
-// {
-//   let it = o;
-//   _.assert( it.Looker.iterationProper( it ) );
-//   it.perform();
-//   return it.result;
-// }
-
-// _.routineExtend( resolve_body, _.selector.select.body );
-//
-// var defaults = resolve_body.defaults = Defaults;
-//
-// _.assert( _.routineIs( defaults.onSelectorUndecorate ) );
-//
-// let resolve = _.routineUnite( resolve_head, resolve_body );
-
 // --
 // extend looker
 // --
@@ -130,7 +109,6 @@ SelectorDefaults.replicateIteration = null;
 function head( routine, args )
 {
   _.assert( arguments.length === 2 );
-  // debugger;
   let o = routine.defaults.Looker.optionsFromArguments( args );
 
   if( _.routineIs( routine ) )
@@ -142,23 +120,11 @@ function head( routine, args )
   _.assert( _.routineIs( routine ) || _.auxIs( routine ) );
   if( _.routineIs( routine ) ) /* zzz : remove "if" later */
   _.assertMapHasOnly( o, routine.defaults );
-  // _.routineOptionsPreservingUndefines( routine, o );
   else if( routine !== null )
   _.assertMapHasOnly( o, routine );
-  // _.routineOptionsPreservingUndefines( null, o, routine );
 
-  // if( _.routineIs( routine ) ) /* zzz : remove "if" later */
-  // _.routineOptionsPreservingUndefines( routine, o );
-  // else
-  // _.routineOptionsPreservingUndefines( null, o, routine );
-  // o.Looker.optionsForm( routine, o );
-  // debugger;
-  // let optionsForSelect = o.optionsForSelect = o.Looker.selectorOptionsForSelectFrom( o );
-  // debugger;
   let it = o.Looker.optionsToIteration( null, o );
-  // debugger;
-  // _.assert( it.iterator.optionsForSelect === optionsForSelect );
-  // _.assert( it.optionsForSelect === optionsForSelect );
+
   return it;
 }
 
@@ -187,7 +153,6 @@ function optionsForm( routine, o )
   Parent.optionsForm.call( this, routine, o );
 
   _.assert( o.iteratorProper( o ) );
-  // _.assert( _.mapIs( o ) );
   _.assert( !o.recursive || !!o.onSelectorReplicate, () => 'For recursive selection onSelectorReplicate should be defined' );
 
   const onUp2 = o.onUp; /* xxx : write down to o? */
@@ -199,7 +164,6 @@ function optionsForm( routine, o )
   o.onUp = onUp;
   o.onDown = onDown;
 
-  // debugger;
   if( o.compositeSelecting )
   {
 
@@ -222,6 +186,7 @@ function optionsForm( routine, o )
 
   /* */
 
+  /* xxx : move out? */
   function onUp()
   {
     let it = this;
@@ -296,7 +261,6 @@ function optionsForm( routine, o )
     if( onDown2 )
     onDown2.apply( it, arguments );
 
-    // debugger;
     if( o.onSelectorDown )
     o.onSelectorDown.call( it, o );
   }
@@ -314,11 +278,9 @@ function optionsToIteration( iterator, o )
   _.assert( it.replicateIteration === undefined );
   _.assert( it.recursive === Infinity );
 
-  // debugger;
   _.assert( it.optionsForSelect === null );
   let optionsForSelect = it.iterator.optionsForSelect = it.selectorOptionsForSelectFrom( it );
   _.assert( it.optionsForSelect === it.iterator.optionsForSelect );
-  // debugger;
 
   return it;
 }
@@ -334,11 +296,10 @@ function iteratorMake( o )
 
 //
 
-function selectorOptionsForSelectFrom( o )
+function selectorOptionsForSelectFrom( o ) /* xxx : redesign? */
 {
   let it = this;
 
-  // _.assert( _.aux.is( o ) );
   _.assert( !!o.Looker.Selector );
   _.assert( !!o.Looker.Selector );
 
@@ -351,11 +312,6 @@ function selectorOptionsForSelectFrom( o )
   o2.onDownEnd = o.onDownEnd;
   o2.onUpBegin = o.onUpBegin;
   o2.onUpEnd = o.onUpEnd;
-
-  // debugger;
-  // o2.onSelectorReplicate =
-  // o2.missingAction = 'throw'; /* yyy */
-  // debugger;
 
   delete o2.Looker;
   delete o2.recursive;
@@ -386,7 +342,6 @@ function performBegin()
 {
   let it = this;
   Parent.performBegin.apply( it, arguments );
-  // _.assert( Object.is( it.originalSrc, it.src ) );
   _.assert( arguments.length === 0 );
   _.assert( it.compositeRoot !== undefined );
   return it;
@@ -414,7 +369,6 @@ function _select( visited )
   if( _.longHas( visited, it.src ) ) /* qqq : cover please */
   return;
 
-  // debugger;
   let op = _.mapExtend( null, it.optionsForSelect ); /* xxx : optimize */
   op.replicateIteration = it;
   op.selector = it.src;
@@ -431,9 +385,7 @@ function _select( visited )
   op.Looker = it.Selector;
   _.assert( _.routineIs( op.Looker.exec ) );
 
-  // debugger;
   let sit = op.Looker.execIt( op );
-  // debugger;
 
   _.assert( sit.iterator === op );
   _.assert( sit.iterator.state === 2 );
@@ -469,8 +421,6 @@ function onSelectorReplicateComposite( fop )
     let it = this;
     _.assert( !it.rit );
     let selector = o.selector;
-
-    // debugger; /* xxx2 */
 
     if( !_.strIs( selector ) )
     return;
@@ -567,6 +517,14 @@ function classDefine( o )
 {
 
   _.routineOptions( classDefine, o );
+  _.assert( _.objectIs( this.Resolver ) );
+  _.assert( _.objectIs( this.Resolver.Selector ) );
+
+  o.replicator = o.replicator || Object.create( null );
+  o.replicator.parent = o.replicator.parent || this.Resolver;
+
+  o.selector = o.selector || Object.create( null );
+  o.selector.parent = o.selector.parent || this.Resolver.Selector;
 
   let replicator = _.replicator.classDefine( o.replicator );
   let selector = _.selector.classDefine( o.selector );
@@ -611,15 +569,15 @@ let IterationPreserveResolverSelector =
 {
 }
 
-let ResolverSelectorPreserve =
+let ResolverSelectorPreserve = /* xxx */
 {
 }
 
 let Selector = _.looker.classDefine
 ({
   name : 'Selector',
-  parent : _.Selector,
-  defaults : SelectorDefaults,
+  parent : _.selector.Selector,
+  prime : SelectorPrime,
   looker : LookerResolverSelector,
   iterator : IteratorResolverSelector,
   iteration : IterationResolverSelector,
@@ -633,11 +591,13 @@ _.assert( Selector.exec.defaults.replicateIteration !== undefined );
 
 //
 
+/* xxx : move */
+let compositeSymbol = Symbol.for( 'composite' );
+
 let LookerResolverReplicator =
 {
   constructor : function Replicator(){},
   head,
-  // exec : resolve,
   optionsFromArguments,
   optionsForm,
   optionsToIteration,
@@ -647,6 +607,7 @@ let LookerResolverReplicator =
   performEnd,
   _select,
   Selector,
+  compositeSymbol,
 }
 
 let IteratorResolverReplicator =
@@ -670,19 +631,17 @@ let IterationPreserveResolverReplicator =
 }
 
 /* xxx : redefine define */
-// debugger;
 let Replicator = _.looker.classDefine
 ({
   name : 'Replicator',
   parent : _.replicator.Replicator,
-  defaults : Defaults,
+  prime : Prime,
   looker : LookerResolverReplicator,
   iterator : IteratorResolverReplicator,
   iteration : IterationResolverReplicator,
   iterationPreserve : IterationPreserveResolverReplicator,
 });
 
-// debugger;
 _.assert( Replicator.selector === null );
 _.assert( Replicator.Iteration.compositeRoot === null );
 _.assert( Replicator.compositeRoot === undefined );
@@ -690,44 +649,34 @@ _.assert( Replicator.missingAction !== undefined );
 
 //
 
-Replicator.Selector = Selector;
-Replicator.Replicator = Replicator;
-Replicator.ResolverSelectorPreserve = ResolverSelectorPreserve;
-
 Selector.Selector = Selector;
 Selector.Replicator = Replicator;
 Selector.ResolverSelectorPreserve = ResolverSelectorPreserve;
 
+Replicator.Selector = Selector;
+Replicator.Replicator = Replicator;
+Replicator.ResolverSelectorPreserve = ResolverSelectorPreserve;
+
 _.assert( Replicator.exec.defaults.missingAction === 'throw' );
 _.assert( Replicator.exec.body.defaults.missingAction === 'throw' );
 
-// _.routineExtend( resolve_body, _.selector.select.body );
-// var defaults = resolve_body.defaults = Defaults;
-// _.assert( _.routineIs( defaults.onSelectorUndecorate ) );
-// let resolve = _.routineUnite( resolve_head, resolve_body );
-
 const resolve = Replicator.exec;
 const resolveIt = Replicator.execIt;
-// const resolveMaybe = _.routineUnite({ head : Replicator.exec.head, body : Replicator.exec.body, strategy : 'inheriting' });
 let resolveMaybe = _.routine.uniteInheriting( Replicator.exec.head, Replicator.exec.body );
 var defaults = resolveMaybe.defaults;
 defaults.Looker = defaults;
 defaults.missingAction = 'undefine';
 _.assert( resolveMaybe.body === Replicator.exec.body );
 _.assert( resolveMaybe.defaults.missingAction === 'undefine' );
-// _.assert( resolveMaybe.body.defaults.missingAction === 'undefine' ); /* xxx : uncomment? */
 _.assert( resolveMaybe.body.defaults !== resolveMaybe.defaults );
 _.assert( Replicator.exec.body.defaults.missingAction === 'throw' );
 _.assert( Replicator.exec.defaults.missingAction === 'throw' );
 
 //
 
-/* xxx : move */
-let compositeSymbol = Symbol.for( 'composite' );
-
 var FunctorExtension =
 {
-  ... _.selector.functor,
+  // ... _.selector.functor,
   onSelectorReplicateComposite,
   onSelectorDownComposite,
 }
@@ -735,7 +684,9 @@ var FunctorExtension =
 let ResolverExtension =
 {
 
-  ... _.replicator,
+  name : 'resolver',
+  Looker : Replicator,
+  Resolver : Replicator,
 
   classDefine,
   resolve,
@@ -744,11 +695,6 @@ let ResolverExtension =
 
   onSelectorReplicate,
   compositeSymbol,
-
-  Looker : Replicator,
-  Resolver : Replicator,
-  // Replicator,
-  // Selector,
 
 }
 
@@ -760,9 +706,9 @@ let ToolsExtension =
 }
 
 let Self = Replicator;
-_.mapSupplement( _, ToolsExtension );
-_.mapSupplement( _.resolver, ResolverExtension );
-_.mapSupplement( _.resolver.functor, FunctorExtension );
+_.mapExtend( _, ToolsExtension );
+_.mapExtend( _.resolver, ResolverExtension );
+_.mapExtend( _.resolver.functor, FunctorExtension );
 
 // --
 // export
