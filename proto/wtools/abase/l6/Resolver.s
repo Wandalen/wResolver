@@ -51,7 +51,7 @@ let Prime =
   missingAction : 'throw',
   onSelectorUp : null,
   onSelectorDown : null,
-  onSelectorReplicate,
+  onSelectorReplicate : _onSelectorReplicateDefault,
   onSelectorUndecorate : _.selector.onSelectorUndecorate,
   onQuantitativeFail : null,
   recursive : 0,
@@ -125,6 +125,19 @@ function head( routine, args )
   return it;
 }
 
+// //
+//
+// function exec_body( it )
+// {
+//   debugger;
+//   it.execIt.body.call( this, it );
+//   _.assert( arguments.length === 1, 'Expects single argument' );
+//   if( it.error && it.error !== true )
+//   if( it.missingAction === 'throw' )
+//   throw it.error;
+//   return it.result;
+// }
+
 //
 
 function optionsFromArguments( args )
@@ -171,6 +184,13 @@ function iteratorInitEnd( iterator )
   _.assert( !iterator.recursive || !!iterator.onSelectorReplicate, () => 'For recursive selection onSelectorReplicate should be defined' );
   _.assert( iterator.onUp2 === null ); /* xxx0 : hide this defaults. write test */
   _.assert( iterator.onDown2 === null );
+  _.assert( iterator.Resolver === undefined );
+  _.assert( iterator.resolvingRecursive === null );
+  _.assert
+  (
+    _.longHas( [ 'undefine', 'ignore', 'throw', 'error' ], iterator.missingAction ),
+    'Unknown value of option missing action', iterator.missingAction  /* qqq : template string in all files */
+  );
 
   iterator.onUp2 = iterator.onUp;
   iterator.onDown2 = iterator.onDown;
@@ -184,7 +204,7 @@ function iteratorInitEnd( iterator )
   if( iterator.compositeSelecting )
   {
 
-    if( iterator.onSelectorReplicate === onSelectorReplicate || iterator.onSelectorReplicate === null )
+    if( iterator.onSelectorReplicate === iterator._onSelectorReplicateDefault || iterator.onSelectorReplicate === null )
     iterator.onSelectorReplicate = _.resolver.functor.onSelectorReplicateComposite();
     if( iterator.onSelectorDown === null )
     iterator.onSelectorDown = _.resolver.functor.onSelectorDownComposite();
@@ -229,24 +249,44 @@ function _replicateUp()
       selector = undefined;
       /* xxx : write test resolving undefined */
       /* xxx : use sit.error? */
-      if( sit.result !== undefined && it.resolvingRecursive && visited.length <= it.resolvingRecursive )
+      // if( sit.result !== undefined && it.resolvingRecursive && visited.length <= it.resolvingRecursive )
+      if( sit.error )
       {
-        counter += 1;
-        selector = it.onSelectorReplicate({ selector : sit.result, counter });
-        if( selector === undefined )
+        debugger;
+        // if( !sit.error )
+        it.errResolvingHandle
+        ({
+          missingAction : it.missingAction,
+          selector : it.selector,
+          err : sit.error,
+        });
+        if( it.missingAction === 'error' )
+        it.dst = it.error;
+        else
+        it.dst = undefined;
+        it.continue = false;
+        it.dstMaking = false; /* xxx0 */
+      }
+      else
+      {
+        if( it.resolvingRecursive && visited.length <= it.resolvingRecursive )
         {
-          if( !sit.error )
+          counter += 1;
+          selector = it.onSelectorReplicate({ selector : sit.result, counter });
+          if( selector === undefined )
+          {
+            // if( !sit.error )
+            it.dst = sit.result;
+            it.continue = false;
+            it.dstMaking = false; /* xxx0 */
+          }
+        }
+        else
+        {
           it.dst = sit.result;
           it.continue = false;
           it.dstMaking = false; /* xxx0 */
         }
-      }
-      else
-      {
-        if( !sit.error )
-        it.dst = sit.result;
-        it.continue = false;
-        it.dstMaking = false; /* xxx0 */
       }
     }
     else if( selector !== undefined )
@@ -334,6 +374,32 @@ function selectorIterate()
 
 //
 
+function perform()
+{
+  let it = this;
+
+  it.performBegin();
+
+  try
+  {
+    it.iterate();
+  }
+  catch( err )
+  {
+    throw it.errResolvingMake
+    ({
+      selector : it.selector,
+      err,
+    });
+  }
+
+  it.performEnd();
+
+  return it;
+}
+
+//
+
 function performBegin()
 {
   let it = this;
@@ -389,9 +455,85 @@ function _select( visited )
   return sit;
 }
 
+// --
+// err
+// --
+
+function errResolvingMake( o )
+{
+  let it = this;
+  let rit = it.replicateIteration ? it.replicateIteration : it;
+  _.assertRoutineOptions( errResolvingMake, arguments );
+  _.assert( arguments.length === 1 );
+
+  if( o.err && o.err.ResolvingError )
+  {
+    debugger;
+    return o.err;
+  }
+
+  o.err = it.errMake( 'Failed to resolve', _.ct.format( _.entity.exportStringShort( o.selector ), 'path' ), '\n', o.err );
+  _._errFields( o.err, { ResolvingError : true } );
+
+  return o.err;
+}
+
+errResolvingMake.defaults =
+{
+  selector : null,
+  err : null,
+}
+
 //
 
-function onSelectorReplicate( o )
+function errResolvingHandle( o )
+{
+  let it = this;
+
+  _.assertRoutineOptions( errResolvingHandle, arguments );
+  _.assert( arguments.length === 1 );
+
+  if( o.missingAction === 'undefine' || o.missingAction === 'ignore' )
+  {
+    it.error = it.error || true;
+    return;
+  }
+
+  if( o.missingAction === 'throw' )
+  throw errMake();
+  else
+  return errMake();
+
+  function errMake()
+  {
+    if( it.error && it.error !== true )
+    return it.error;
+    if( _.routineIs( o.err ) )
+    o.err = o.err();
+    if( !o.err || !o.err.ResolvingErrror )
+    o.err = it.errResolvingMake
+    ({
+      selector : o.selector,
+      err : o.err,
+    });
+    it.error = o.err;
+    return o.err;
+  }
+
+}
+
+errResolvingHandle.defaults =
+{
+  missingAction : null,
+  selector : null,
+  err : null,
+}
+
+// --
+//
+// --
+
+function _onSelectorReplicateDefault( o )
 {
   let it = this;
   if( _.strIs( o.selector ) )
@@ -595,15 +737,23 @@ let LookerResolverReplicator =
   _replicateUp,
   _replicateDown,
   selectorOptionsForSelectFrom,
+  perform,
   performBegin,
   performEnd,
   _select,
+
+  errResolvingMake,
+  errResolvingHandle,
+
+  _onSelectorReplicateDefault,
+
   Selector,
   compositeSymbol,
 }
 
 let IteratorResolverReplicator =
 {
+  resolvingRecursive : null,
   selector : null,
   srcForSelect : null,
   optionsForSelect : null,
@@ -613,8 +763,8 @@ let IteratorResolverReplicator =
 
 let IterationResolverReplicator =
 {
-  composite : false,
-  compositeRoot : null,
+  // composite : false,
+  // compositeRoot : null,
 }
 
 let IterationPreserveResolverReplicator =
@@ -632,12 +782,15 @@ let Resolver = _.looker.classDefine
   iterator : IteratorResolverReplicator,
   iteration : IterationResolverReplicator,
   iterationPreserve : IterationPreserveResolverReplicator,
+  // exec : { head : ParentReplicator.exec.head, body : exec_body },
 });
 
 _.assert( Resolver.selector === null );
-_.assert( Resolver.Iteration.compositeRoot === null );
-_.assert( Resolver.compositeRoot === undefined );
+_.assert( Resolver.Iteration.compositeRoot === undefined );
+_.assert( Resolver.Iterator.compositeRoot === undefined );
+_.assert( Resolver.compositeRoot !== undefined );
 _.assert( Resolver.missingAction !== undefined );
+_.assert( Resolver._onSelectorReplicateDefault === _onSelectorReplicateDefault );
 
 //
 
@@ -692,7 +845,7 @@ let ResolverExtension =
   resolveIt,
   resolveMaybe,
 
-  onSelectorReplicate,
+  // onSelectorReplicate,
   compositeSymbol,
 
 }

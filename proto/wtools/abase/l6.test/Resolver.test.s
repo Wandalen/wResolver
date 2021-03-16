@@ -1255,11 +1255,12 @@ function resolveRecursive( test )
     {
       let exp =
 `
+      Failed to resolve {result::dir/userX} !
       Cant select result::dir/userX from {- Map.polluted with 3 elements -}
         because result::dir does not exist
         fall at "/"
 `
-      test.equivalent( err.originalMessage, exp );
+      test.equivalent( _.ct.strip( err.originalMessage ), exp );
     }
   );
 
@@ -1287,76 +1288,6 @@ function resolveRecursive( test )
     if( !_.strHas( it.selector, '::' ) )
     return;
     it.selector = _.strIsolateRightOrAll( it.selector, '::' )[ 2 ];
-  }
-
-}
-
-//
-
-function resolveOptionMissingAction( test )
-{
-
-  act({ missingAction : 'ignore' });
-  act({ missingAction : 'undefine' });
-  act({ missingAction : 'error' });
-  actThrowing({ missingAction : 'throw' });
-
-  /* - */
-
-  function act( env )
-  {
-
-    /* */
-
-    test.case = 'trivial';
-    var src =
-    {
-      b : { b1 : 1, b2 : '1' },
-      c : { c1 : 1, c2 : '2' },
-    }
-    var expected = undefined;
-    var options =
-    {
-      src,
-      selector : 'd',
-      missingAction : env.missingAction,
-    }
-    var got = _.resolve( options );
-    if( env.missinAction === 'error' )
-    test.true( _.errIs( got ) );
-    else
-    test.identical( got, expected );
-
-    /* */
-
-  }
-
-  /* - */
-
-  function actThrowing( env )
-  {
-
-    /* */
-
-    var src =
-    {
-      b : { b1 : 1, b2 : '1' },
-      c : { c1 : 1, c2 : '2' },
-    }
-
-    test.shouldThrowErrorSync( () =>
-    {
-      var options =
-      {
-        src,
-        selector : 'd',
-        missingAction : env.missingAction,
-      }
-      var got = _.resolve( options );
-    });
-
-    /* */
-
   }
 
 }
@@ -1391,11 +1322,12 @@ function resolveMaybe( test )
     {
       var exp =
 `
+Failed to resolve d
 Cant select d from {- Map.polluted with 2 elements -}
   because d does not exist
   fall at "/"
 `
-      test.equivalent( err.originalMessage, exp );
+      test.equivalent( _.ct.strip( err.originalMessage ), exp );
     }
   );
 
@@ -1417,6 +1349,98 @@ Cant select d from {- Map.polluted with 2 elements -}
   test.identical( got, expected );
 
   /* */
+
+}
+
+//
+
+function optionMissingAction( test )
+{
+
+  /* */
+
+  test.case = `control`;
+
+  var src =
+  {
+    k1 : '1'
+  }
+  var exp = '1';
+  var got = _.resolver.resolve
+  ({
+    src,
+    selector : 'k1',
+  });
+  test.identical( got, exp );
+
+  /* */
+
+  act({ missingAction : 'ignore' });
+  act({ missingAction : 'undefine' });
+  act({ missingAction : 'error' });
+  act({ missingAction : 'throw' });
+
+  /* - */
+
+  function act( env )
+  {
+
+    /* */
+
+    test.case = `${_.entity.exportStringSolo( env )}, basic`;
+    try
+    {
+      var errorMessage =
+`
+      Failed to resolve k2
+      Cant select k2 from {- Map.polluted with 1 elements -}
+      because k2 does not exist
+      fall at "/"
+`;
+
+      var src =
+      {
+        k1 : '1'
+      }
+      var iterator =
+      {
+        src,
+        selector : 'k2',
+        missingAction : env.missingAction,
+      }
+      var got = _.resolver.resolve( iterator );
+      var exp = undefined;
+      if( env.missingAction === 'error' )
+      {
+        test.true( _.errIs( got ) );
+        test.true( got instanceof _.looker.LookingError );
+        test.identical( got.LookingError, true );
+        test.identical( got.ResolvingError, true );
+        test.equivalent( _.ct.strip( got.originalMessage ), errorMessage );
+      }
+      else
+      {
+        test.identical( got, exp );
+      }
+
+      test.nil( env.missingAction, 'throw' );
+
+    }
+    catch( got )
+    {
+      test.true( _.errIs( got ) );
+      test.identical( env.missingAction, 'throw' );
+      test.true( got instanceof _.looker.LookingError );
+      test.identical( got.LookingError, true );
+      test.identical( got.ResolvingError, true );
+      test.equivalent( _.ct.strip( got.originalMessage ), errorMessage );
+      if( env.missingAction !== 'throw' )
+      throw got;
+    }
+
+    /* */
+
+  }
 
 }
 
@@ -1445,8 +1469,8 @@ let Self =
     resolveDecoratedFixes,
     resolveDecoratedInfix,
     resolveRecursive,
-    resolveOptionMissingAction,
     resolveMaybe,
+    optionMissingAction,
 
   }
 
