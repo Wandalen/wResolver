@@ -1258,7 +1258,7 @@ function resolveRecursive( test )
       Failed to resolve {result::dir/userX} !
       Cant select result::dir/userX from {- Map.polluted with 3 elements -}
         because result::dir does not exist
-        fall at "/"
+        fall at "/dir"
 `
       test.equivalent( _.ct.strip( err.originalMessage ), exp );
     }
@@ -1325,7 +1325,7 @@ function resolveMaybe( test )
 Failed to resolve d
 Cant select d from {- Map.polluted with 2 elements -}
   because d does not exist
-  fall at "/"
+  fall at "/d"
 `
       test.equivalent( _.ct.strip( err.originalMessage ), exp );
     }
@@ -1354,6 +1354,7 @@ Cant select d from {- Map.polluted with 2 elements -}
 
 //
 
+/* xxx : implement similar test for selector */
 function optionMissingAction( test )
 {
 
@@ -1395,7 +1396,7 @@ function optionMissingAction( test )
       Failed to resolve k2
       Cant select k2 from {- Map.polluted with 1 elements -}
       because k2 does not exist
-      fall at "/"
+      fall at "/k2"
 `;
 
       var src =
@@ -1417,6 +1418,7 @@ function optionMissingAction( test )
         test.identical( got.LookingError, true );
         test.identical( got.ResolvingError, true );
         test.equivalent( _.ct.strip( got.originalMessage ), errorMessage );
+        test.true( got === iterator.error );
       }
       else
       {
@@ -1433,10 +1435,53 @@ function optionMissingAction( test )
       test.true( got instanceof _.looker.LookingError );
       test.identical( got.LookingError, true );
       test.identical( got.ResolvingError, true );
+      test.true( got === iterator.error );
       test.equivalent( _.ct.strip( got.originalMessage ), errorMessage );
       if( env.missingAction !== 'throw' )
       throw got;
     }
+
+    /* */
+
+  }
+
+}
+
+//
+
+function resolveUndefined( test )
+{
+
+  /* xxx : similar test for resolverAdv */
+
+  act({ missingAction : 'ignore' });
+  act({ missingAction : 'undefine' });
+  act({ missingAction : 'error' });
+  act({ missingAction : 'throw' });
+
+  /* - */
+
+  function act( env )
+  {
+
+    /* */
+
+    test.case = `${_.entity.exportStringSolo( env )}, basic`;
+
+    var src =
+    {
+      k1 : undefined,
+    }
+    var iterator =
+    {
+      src,
+      selector : 'k1',
+      missingAction : env.missingAction,
+    }
+    var got = _.resolver.resolve( iterator );
+    var exp = undefined;
+    test.identical( got, exp );
+    test.identical( iterator.error, null );
 
     /* */
 
@@ -1471,6 +1516,7 @@ let Self =
     resolveRecursive,
     resolveMaybe,
     optionMissingAction,
+    resolveUndefined,
 
   }
 

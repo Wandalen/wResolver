@@ -227,10 +227,11 @@ function iteratorInitEnd( iterator )
 function _replicateUp()
 {
   let it = this;
-  _.assert( !it.rit );
   let selector
   let visited = [];
   let counter = 0;
+
+  _.assert( !it.rit );
 
   selector = it.onSelectorReplicate({ selector : it.src, counter } );
 
@@ -252,7 +253,6 @@ function _replicateUp()
       // if( sit.result !== undefined && it.resolvingRecursive && visited.length <= it.resolvingRecursive )
       if( sit.error )
       {
-        debugger;
         // if( !sit.error )
         it.errResolvingHandle
         ({
@@ -386,11 +386,14 @@ function perform()
   }
   catch( err )
   {
-    throw it.errResolvingMake
+    let err2 = it.errResolvingMake
     ({
       selector : it.selector,
       err,
     });
+    if( !it.iterator.error || it.iterator.error === true )
+    it.iterator.error = err2;
+    throw err2;
   }
 
   it.performEnd();
@@ -467,10 +470,7 @@ function errResolvingMake( o )
   _.assert( arguments.length === 1 );
 
   if( o.err && o.err.ResolvingError )
-  {
-    debugger;
-    return o.err;
-  }
+  return o.err;
 
   o.err = it.errMake( 'Failed to resolve', _.ct.format( _.entity.exportStringShort( o.selector ), 'path' ), '\n', o.err );
   _._errFields( o.err, { ResolvingError : true } );
@@ -495,7 +495,7 @@ function errResolvingHandle( o )
 
   if( o.missingAction === 'undefine' || o.missingAction === 'ignore' )
   {
-    it.error = it.error || true;
+    it.iterator.error = it.error || true;
     return;
   }
 
@@ -516,7 +516,7 @@ function errResolvingHandle( o )
       selector : o.selector,
       err : o.err,
     });
-    it.error = o.err;
+    it.iterator.error = o.err;
     return o.err;
   }
 
@@ -763,8 +763,6 @@ let IteratorResolverReplicator =
 
 let IterationResolverReplicator =
 {
-  // composite : false,
-  // compositeRoot : null,
 }
 
 let IterationPreserveResolverReplicator =
@@ -782,7 +780,6 @@ let Resolver = _.looker.classDefine
   iterator : IteratorResolverReplicator,
   iteration : IterationResolverReplicator,
   iterationPreserve : IterationPreserveResolverReplicator,
-  // exec : { head : ParentReplicator.exec.head, body : exec_body },
 });
 
 _.assert( Resolver.selector === null );
