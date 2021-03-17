@@ -450,7 +450,11 @@ function _select( visited )
   op.Looker = it.Selector;
   _.assert( _.routineIs( op.Looker.exec ) );
 
+  if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
+  debugger;
   let sit = op.Looker.execIt( op );
+  if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
+  debugger;
 
   _.assert( sit.iterator === op );
   _.assert( sit.iterator.state === 2 );
