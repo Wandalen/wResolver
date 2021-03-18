@@ -3,7 +3,6 @@
 
 'use strict';
 
-
 /**
  * Collection of cross-platform routines to resolve complex data structures.
   @module Tools/base/Resolver
@@ -380,6 +379,9 @@ function perform()
 
   it.performBegin();
 
+  if( it.currentModule && it.currentModule.qualifiedName === 'module::module-a' )
+  debugger;
+
   try
   {
     it.iterate();
@@ -424,6 +426,26 @@ function performEnd()
 
 //
 
+function _selectOptionsMake()
+{
+  let it = this;
+
+  _.assert( arguments.length === 0 );
+
+  let op = _.mapExtend( null, it.optionsForSelect ); /* xxx0 : optimize */
+  op.replicateIteration = it;
+  op.selector = it.src;
+  op.Looker = it.Selector;
+
+  _.assert( _.strIs( op.selector ) );
+  _.assert( !!it.Selector );
+  _.assert( _.routineIs( op.Looker.exec ) );
+
+  return op;
+}
+
+//
+
 function _select( visited )
 {
   let it = this;
@@ -434,21 +456,21 @@ function _select( visited )
   if( _.longHas( visited, it.src ) ) /* qqq : cover please */
   return;
 
-  let op = _.mapExtend( null, it.optionsForSelect ); /* xxx0 : optimize */
-  op.replicateIteration = it;
-  op.selector = it.src;
+  let op = it._selectOptionsMake();
   op.visited = visited;
 
-  _.assert( _.strIs( op.selector ) );
+  // let op = _.mapExtend( null, it.optionsForSelect ); /* xxx0 : optimize */
+  // op.replicateIteration = it;
+  // op.selector = it.src;
+  // op.visited = visited;
+  // op.Looker = it.Selector;
+
+  // _.assert( _.strIs( op.selector ) );
+  // _.assert( !!it.Selector );
+  // _.assert( _.routineIs( op.Looker.exec ) );
   _.assert( !_.longHas( visited, op.selector ), () => `Loop selecting ${op.selector}` );
 
   visited.push( op.selector );
-
-  _.assert( _.strIs( op.selector ) );
-  _.assert( !!it.Selector );
-
-  op.Looker = it.Selector;
-  _.assert( _.routineIs( op.Looker.exec ) );
 
   if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
   debugger;
@@ -744,6 +766,7 @@ let LookerResolverReplicator =
   perform,
   performBegin,
   performEnd,
+  _selectOptionsMake,
   _select,
 
   errResolvingMake,
