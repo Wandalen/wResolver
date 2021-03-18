@@ -37,6 +37,8 @@ _.assert( !!_realGlobal_ );
 _.assert( !!ParentReplicator );
 _.assert( !!ParentSelector );
 
+/* qqq : write nice example for readme */
+
 // --
 // relations
 // --
