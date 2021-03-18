@@ -379,8 +379,8 @@ function perform()
 
   it.performBegin();
 
-  if( it.currentModule && it.currentModule.qualifiedName === 'module::module-a' )
-  debugger;
+  // if( it.currentModule && it.currentModule.qualifiedName === 'module::module-a' )
+  // debugger;
 
   try
   {
@@ -472,11 +472,11 @@ function _select( visited )
 
   visited.push( op.selector );
 
-  if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
-  debugger;
+  // if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
+  // debugger;
   let sit = op.Looker.execIt( op );
-  if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
-  debugger;
+  // if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
+  // debugger;
 
   _.assert( sit.iterator === op );
   _.assert( sit.iterator.state === 2 );

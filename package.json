@@ -1,35 +1,22 @@
 {
-  "name": "wresolver",
-  "version": "0.3.155",
-  "description": "Collection of cross-platform routines to resolve complex data structures.",
-  "author": "Kostiantyn Wandalen <wanalen@01.school>",
-  "license": "MIT",
-  "main": "proto/wtools/abase/l6/Resolver.s",
-  "files": [
-    "proto/wtools/abase/l6",
-    "proto/wtools/Tools.s"
-  ],
-  "scripts": {
-    "test": "wtest .run 'proto/**' rapidity:-3",
-    "docgen": "wdocgen proto"
+  "name" : "wresolver",
+  "version" : "0.3.156",
+  "description" : "Collection of cross-platform routines to resolve complex data structures.",
+  "author" : "Kostiantyn Wandalen <wanalen@01.school>",
+  "license" : "MIT",
+  "main" : "proto/wtools/abase/l6/Resolver.s",
+  "files" : [ "proto/wtools/abase/l6", "proto/wtools/Tools.s" ],
+  "scripts" : { "test" : "wtest .run 'proto/**' rapidity:-3", "docgen" : "wdocgen proto" },
+  "repository" :
+  {
+    "type" : "git",
+    "url" : "https://github.com/Wandalen/wResolver.git"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Wandalen/wResolver.git"
+  "bugs" :
+  {
+    "url" : "https://github.com/Wandalen/wResolver/issues"
   },
-  "bugs": {
-    "url": "https://github.com/Wandalen/wResolver/issues"
-  },
-  "dependencies": {
-    "wTools": "gamma",
-    "wselector": "gamma"
-  },
-  "devDependencies": {
-    "eslint": "7.1.0",
-    "wTesting": "gamma",
-    "wresolver": "file:."
-  },
-  "keywords": [
-    "wTools"
-  ]
+  "dependencies" : { "wTools" : "", "wselector" : "" },
+  "devDependencies" : { "wresolver" : "file:.", "wTesting" : "", "eslint" : "7.1.0" },
+  "keywords" : [ "wTools" ]
 }
