@@ -26,8 +26,8 @@ if( typeof module !== 'undefined' )
 
 }
 
-let _global = _global_;
-let _ = _global_.wTools;
+const _global = _global_;
+const _ = _global_.wTools;
 let ParentReplicator = _.replicator.Replicator; /* xxx0 : inherit from looker directly? */
 let ParentSelector = _.selector.Selector;
 _.resolver = _.resolver || Object.create( _.replicator );
@@ -117,9 +117,9 @@ function head( routine, args )
 
   _.assert( _.routineIs( routine ) || _.auxIs( routine ) );
   if( _.routineIs( routine ) ) /* zzz : remove "if" later */
-  _.assertMapHasOnly( o, routine.defaults );
+  _.map.assertHasOnly( o, routine.defaults );
   else if( routine !== null )
-  _.assertMapHasOnly( o, routine );
+  _.map.assertHasOnly( o, routine );
 
   let it = o.Looker.optionsToIteration( null, o );
 
@@ -500,7 +500,7 @@ function errResolvingMake( o )
   if( o.err && o.err.ResolvingError )
   return o.err;
 
-  o.err = it.errMake( 'Failed to resolve', _.ct.format( _.entity.exportStringShort( o.selector ), 'path' ), '\n', o.err );
+  o.err = it.errMake( 'Failed to resolve', _.ct.format( _.entity.exportStringShallow( o.selector ), 'path' ), '\n', o.err );
   _._errFields( o.err, { ResolvingError : true } );
 
   return o.err;
@@ -883,7 +883,7 @@ let ToolsExtension =
 
 }
 
-let Self = Resolver;
+const Self = Resolver;
 _.mapExtend( _, ToolsExtension );
 _.mapExtend( _.resolver, ResolverExtension );
 _.mapExtend( _.resolver.functor, FunctorExtension );

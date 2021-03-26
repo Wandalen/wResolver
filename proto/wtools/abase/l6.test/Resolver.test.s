@@ -15,8 +15,8 @@ if( typeof module !== 'undefined' )
 
 }
 
-let _global = _global_;
-let _ = _global_.wTools;
+const _global = _global_;
+const _ = _global_.wTools;
 
 // --
 // tests
@@ -906,7 +906,7 @@ function resolveRecursive( test )
 
   var src =
   {
-    a : { map : { name : '::c/c2/0' }, value : 13 },
+    a : { map : { name : '::c/c2/#0' }, value : 13 },
     b : { b1 : '::a/map/name', b2 : 'b2' },
     c : { c1 : false, c2 : [ 'c21', 'c22' ] },
   }
@@ -946,7 +946,7 @@ function resolveRecursive( test )
   /* */
 
   test.case = 'head::b/b1, recursive : 1';
-  var expected = '::c/c2/0';
+  var expected = '::c/c2/#0';
   var selector = 'head::b/b1';
   var got = _.resolve
   ({
@@ -985,7 +985,7 @@ function resolveRecursive( test )
 
   var src =
   {
-    a : { map : { name : '{::c/c2/0}' }, value : 13 },
+    a : { map : { name : '{::c/c2/#0}' }, value : 13 },
     b : { b1 : '{::a/map/name}', b2 : 'b2' },
     c : { c1 : false, c2 : [ 'c21', 'c22' ] },
   }
@@ -1025,7 +1025,7 @@ function resolveRecursive( test )
   /* */
 
   test.case = '{head::b/b1}, recursive : 1';
-  var expected = '{::c/c2/0}';
+  var expected = '{::c/c2/#0}';
   var selector = '{head::b/b1}';
   var got = _.resolve
   ({
@@ -1064,7 +1064,7 @@ function resolveRecursive( test )
 
   var src =
   {
-    a : { map : { name : '{::c/c2/0}' }, value : 13 },
+    a : { map : { name : '{::c/c2/#0}' }, value : 13 },
     b : { b1 : '{::a/map/name}', b2 : [ 'b2-a', 'b2-b' ] },
     c : { c1 : false, c2 : [ 'c21', 'c22' ] },
   }
@@ -1104,7 +1104,7 @@ function resolveRecursive( test )
   /* */
 
   test.case = 'begin {head::b/b1} mid {b/b2} end, recursive : 1';
-  var expected = [ 'begin {::c/c2/0} mid b2-a end', 'begin {::c/c2/0} mid b2-b end' ];
+  var expected = [ 'begin {::c/c2/#0} mid b2-a end', 'begin {::c/c2/#0} mid b2-b end' ];
   var selector = 'begin {head::b/b1} mid {::b/b2} end';
   var got = _.resolve
   ({
@@ -1493,7 +1493,7 @@ function resolveUndefined( test )
 // declare
 // --
 
-let Self =
+const Proto =
 {
 
   name : 'Tools.l6.Resolver',
@@ -1522,7 +1522,7 @@ let Self =
 
 }
 
-Self = wTestSuite( Self );
+const Self = wTestSuite( Proto );
 if( typeof module !== 'undefined' && !module.parent )
 wTester.test( Self.name );
 
