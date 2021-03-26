@@ -233,6 +233,7 @@ function _replicateUp()
   let counter = 0;
 
   _.assert( !it.rit );
+  _.debugger;
 
   selector = it.onSelectorReplicate({ selector : it.src, counter } );
 
