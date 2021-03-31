@@ -1,13 +1,14 @@
 {
   "name": "wresolver",
-  "version": "0.3.162",
+  "version": "0.3.163",
   "description": "Collection of cross-platform routines to resolve complex data structures.",
   "author": "Kostiantyn Wandalen <wanalen@01.school>",
   "license": "MIT",
   "main": "proto/wtools/abase/l6/Resolver.s",
   "files": [
     "proto/wtools/abase/l6",
-    "proto/wtools/Tools.s"
+    "proto/wtools/Tools.s",
+    "proto/node_modules"
   ],
   "scripts": {
     "test": "wtest .run 'proto/**' rapidity:-3",
@@ -26,8 +27,7 @@
   },
   "devDependencies": {
     "eslint": "7.1.0",
-    "wTesting": "delta",
-    "wresolver": "file:."
+    "wTesting": "delta"
   },
   "keywords": [
     "wTools"
