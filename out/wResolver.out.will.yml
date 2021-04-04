@@ -2,15 +2,12 @@ format: outwillfile-2.0
 root:
   - wResolver.out
 consistency:
-  wResolver.out.will.yml: &ref_0
-    hash: e75bf4e2bb54090a7db9a29f2be9e1ff
-    size: 38285
-  ../.ex.will.yml: &ref_1
+  ../.ex.will.yml: &ref_0
     hash: 1c09b0804fa312e8884fb58661894c4a
     size: 1725
-  ../.im.will.yml: &ref_2
-    hash: 46d8234e800bef58238f17e109be01b1
-    size: 5116
+  ../.im.will.yml: &ref_1
+    hash: e5bab7512b1fae7e786d8c646a2ec49f
+    size: 5076
 module:
   wResolver.out:
     about:
@@ -21,18 +18,18 @@ module:
         structures.
       enabled: 1
       version: 0.4.0
-      interpreters:
+      interpreters: &ref_2
         - njs >= 10.0.0
         - chrome >= 60.0.0
         - firefox >= 60.0.0
-      keywords:
+      keywords: &ref_3
         - wTools
       license: MIT
       author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors:
+      contributors: &ref_4
         - Kostiantyn Wandalen <wanalen@01.school>
       npm.name: wresolver
-      npm.scripts:
+      npm.scripts: &ref_5
         test: wtest .run proto/**
         docgen: wdocgen .build proto
     path:
@@ -63,7 +60,7 @@ module:
       download:
         criterion:
           predefined: 1
-        path: ../
+        path: ..
       repository:
         path: 'git+https:///github.com/Wandalen/wResolver.git'
       origins:
@@ -144,6 +141,10 @@ module:
           raw: compiled
           content: prime
         path: '{path::out.*=}/source/Index.s'
+      npm.proto.entry:
+        path:
+          - ../proto/wtools/abase/l6/Resolver.s
+          - ../proto/node_modules/wresolver
       exported.dir.proto.export:
         criterion:
           generated: 1
@@ -703,24 +704,6 @@ module:
           content: prime
         inherit:
           - files.transpile
-      exported.proto.export:
-        opts:
-          filePath: 'reflector::exported.proto.export'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
-      exported.files.proto.export:
-        opts:
-          filePath: 'reflector::exported.files.proto.export'
-        criterion:
-          generated: 1
-          content: proto
-          export: 1
-        inherit:
-          - files.reflect
     build:
       proto.export:
         steps:
@@ -809,9 +792,8 @@ module:
           content: proto
           export: 1
     consistency:
-      wResolver.out.will.yml: *ref_0
-      ../.ex.will.yml: *ref_1
-      ../.im.will.yml: *ref_2
+      ../.ex.will.yml: *ref_0
+      ../.im.will.yml: *ref_1
   ../:
     about:
       name: wResolver
@@ -821,20 +803,13 @@ module:
         structures.
       enabled: 1
       version: 0.4.0
-      interpreters:
-        - njs >= 10.0.0
-        - chrome >= 60.0.0
-        - firefox >= 60.0.0
-      keywords:
-        - wTools
+      interpreters: *ref_2
+      keywords: *ref_3
       license: MIT
       author: Kostiantyn Wandalen <wanalen@01.school>
-      contributors:
-        - Kostiantyn Wandalen <wanalen@01.school>
+      contributors: *ref_4
       npm.name: wresolver
-      npm.scripts:
-        test: wtest .run proto/**
-        docgen: wdocgen .build proto
+      npm.scripts: *ref_5
     path:
       module.willfiles:
         criterion:
@@ -863,7 +838,7 @@ module:
       download:
         criterion:
           predefined: 1
-        path: ./
+        path: .
       repository:
         path: 'git+https:///github.com/Wandalen/wResolver.git'
       origins:
@@ -944,6 +919,10 @@ module:
           raw: compiled
           content: prime
         path: '{path::out.*=}/source/Index.s'
+      npm.proto.entry:
+        path:
+          - proto/wtools/abase/l6/Resolver.s
+          - proto/node_modules/wresolver
     submodule:
       wTools:
         path: 'npm:///wTools'
@@ -1506,6 +1485,5 @@ module:
         hash: 1c09b0804fa312e8884fb58661894c4a
         size: 1725
       ../.im.will.yml:
-        hash: 46d8234e800bef58238f17e109be01b1
-        size: 5116
-      wResolver.out.will.yml: *ref_0
+        hash: e5bab7512b1fae7e786d8c646a2ec49f
+        size: 5076
