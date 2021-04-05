@@ -80,8 +80,8 @@ path:
       raw: compiled
       content: prime
   npm.proto.entry:
-    - /pro/module/wResolver/proto/wtools/abase/l6/Resolver.s
-    - /pro/module/wResolver/proto/node_modules/wresolver
+    - proto/wtools/abase/l6/Resolver.s
+    - proto/node_modules/wresolver
 reflector:
   reflect.proto:
     inherit: predefined.*
