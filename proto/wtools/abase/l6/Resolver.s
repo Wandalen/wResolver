@@ -17,7 +17,7 @@
 if( typeof module !== 'undefined' )
 {
 
-  let _ = require( '../../../wtools/Tools.s' );
+  let _ = require( '../../../node_modules/Tools' );
 
   _.include( 'wLooker' );
   _.include( 'wReplicator' );
@@ -233,7 +233,6 @@ function _replicateUp()
   let counter = 0;
 
   _.assert( !it.rit );
-  _.debugger;
 
   selector = it.onSelectorReplicate({ selector : it.src, counter } );
 
