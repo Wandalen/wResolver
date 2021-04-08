@@ -17,7 +17,7 @@
 if( typeof module !== 'undefined' )
 {
 
-  let _ = require( '../../../node_modules/Tools' );
+  const _ = require( '../../../node_modules/Tools' );
 
   _.include( 'wLooker' );
   _.include( 'wReplicator' );
@@ -28,8 +28,8 @@ if( typeof module !== 'undefined' )
 
 const _global = _global_;
 const _ = _global_.wTools;
-let ParentReplicator = _.replicator.Replicator; /* xxx0 : inherit from looker directly? */
-let ParentSelector = _.selector.Selector;
+const ParentReplicator = _.replicator.Replicator; /* xxx0 : inherit from looker directly? */
+const ParentSelector = _.selector.Selector;
 _.resolver = _.resolver || Object.create( _.replicator );
 _.resolver.functor = _.resolver.functor || Object.create( _.selector.functor );
 
