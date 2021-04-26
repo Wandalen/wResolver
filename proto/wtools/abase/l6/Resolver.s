@@ -46,8 +46,8 @@ _.assert( !!ParentSelector );
 let Prime =
 {
 
-  ... _.mapExtend( null, _.selector.Looker.Prime ),
-  ... _.mapExtend( null, _.replicator.Looker.Prime ),
+  ... _.props.extend( null, _.selector.Looker.Prime ),
+  ... _.props.extend( null, _.replicator.Looker.Prime ),
 
   missingAction : 'throw',
   onSelectorUp : null,
@@ -434,7 +434,7 @@ function _selectOptionsMake()
 
   _.assert( arguments.length === 0 );
 
-  let op = _.mapExtend( null, it.optionsForSelect ); /* xxx0 : optimize */
+  let op = _.props.extend( null, it.optionsForSelect ); /* xxx0 : optimize */
   op.replicateIteration = it;
   op.selector = it.src;
   op.Looker = it.Selector;
@@ -461,7 +461,7 @@ function _select( visited )
   let op = it._selectOptionsMake();
   op.visited = visited;
 
-  // let op = _.mapExtend( null, it.optionsForSelect ); /* xxx0 : optimize */
+  // let op = _.props.extend( null, it.optionsForSelect ); /* xxx0 : optimize */
   // op.replicateIteration = it;
   // op.selector = it.src;
   // op.visited = visited;
@@ -494,7 +494,7 @@ function errResolvingMake( o )
 {
   let it = this;
   let rit = it.replicateIteration ? it.replicateIteration : it;
-  _.assertRoutineOptions( errResolvingMake, arguments );
+  _.routine.assertOptions( errResolvingMake, arguments );
   _.assert( arguments.length === 1 );
 
   if( o.err && o.err.ResolvingError )
@@ -518,7 +518,7 @@ function errResolvingHandle( o )
 {
   let it = this;
 
-  _.assertRoutineOptions( errResolvingHandle, arguments );
+  _.routine.assertOptions( errResolvingHandle, arguments );
   _.assert( arguments.length === 1 );
 
   if( o.missingAction === 'undefine' || o.missingAction === 'ignore' )
@@ -573,7 +573,7 @@ function _onSelectorReplicateDefault( o )
 function onSelectorReplicateComposite( fop )
 {
 
-  fop = _.routineOptions( onSelectorReplicateComposite, arguments );
+  fop = _.routine.options_( onSelectorReplicateComposite, arguments );
   fop.prefix = _.arrayAs( fop.prefix );
   fop.postfix = _.arrayAs( fop.postfix );
   fop.onSelectorReplicate = fop.onSelectorReplicate || onSelectorReplicate;
@@ -613,7 +613,7 @@ function onSelectorReplicateComposite( fop )
     if( selector2.length === 3 )
     if( _.strsEquivalentAny( fop.prefix, selector2[ 0 ] ) && _.strsEquivalentAny( fop.postfix, selector2[ 2 ] ) )
     {
-      return fop.onSelectorReplicate.call( it, _.mapExtend( null, o, { selector : selector2[ 1 ] } ) );
+      return fop.onSelectorReplicate.call( it, _.props.extend( null, o, { selector : selector2[ 1 ] } ) );
     }
 
     selector2 = _.strSplitsCoupledGroup({ splits : selector2, prefix : '{', postfix : '}' });
@@ -626,7 +626,7 @@ function onSelectorReplicateComposite( fop )
 
       _.assert( split.length === 3 );
 
-      let split1 = fop.onSelectorReplicate.call( it, _.mapExtend( null, o, { selector : split[ 1 ] } ) );
+      let split1 = fop.onSelectorReplicate.call( it, _.props.extend( null, o, { selector : split[ 1 ] } ) );
       if( split1 === undefined )
       {
         return split.join( '' );
@@ -681,7 +681,7 @@ function onSelectorDownComposite( fop )
 function classDefine( o )
 {
 
-  _.routineOptions( classDefine, o );
+  _.routine.options_( classDefine, o );
   _.assert( _.objectIs( this.Resolver ) );
   _.assert( _.objectIs( this.Resolver.Selector ) );
 
@@ -830,12 +830,12 @@ Resolver.ResolverSelectorPreserve = ResolverSelectorPreserve;
 
 _.assert( Resolver.exec.defaults.missingAction === 'throw' );
 _.assert( Resolver.exec.body.defaults.missingAction === 'throw' );
-_.assert( _.property.has( Selector.Iterator, 'result' ) && Selector.Iterator.result === undefined );
-_.assert( _.property.has( Resolver.Iterator, 'result' ) && Resolver.Iterator.result === undefined );
+_.assert( _.props.has( Selector.Iterator, 'result' ) && Selector.Iterator.result === undefined );
+_.assert( _.props.has( Resolver.Iterator, 'result' ) && Resolver.Iterator.result === undefined );
 _.assert( Selector.result === undefined );
 _.assert( Resolver.result === undefined );
-_.assert( _.property.has( Selector.Iteration, 'dst' ) && Selector.Iteration.dst === undefined );
-_.assert( _.property.has( Resolver.Iteration, 'dst' ) && Resolver.Iteration.dst === undefined );
+_.assert( _.props.has( Selector.Iteration, 'dst' ) && Selector.Iteration.dst === undefined );
+_.assert( _.props.has( Resolver.Iteration, 'dst' ) && Resolver.Iteration.dst === undefined );
 _.assert( Selector.dst === undefined );
 _.assert( Resolver.dst === undefined );
 
@@ -884,9 +884,9 @@ let ToolsExtension =
 }
 
 const Self = Resolver;
-_.mapExtend( _, ToolsExtension );
-_.mapExtend( _.resolver, ResolverExtension );
-_.mapExtend( _.resolver.functor, FunctorExtension );
+_.props.extend( _, ToolsExtension );
+_.props.extend( _.resolver, ResolverExtension );
+_.props.extend( _.resolver.functor, FunctorExtension );
 
 // --
 // export
