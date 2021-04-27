@@ -611,7 +611,7 @@ function onSelectorReplicateComposite( fop )
     }
 
     if( selector2.length === 3 )
-    if( _.strsEquivalentAny( fop.prefix, selector2[ 0 ] ) && _.strsEquivalentAny( fop.postfix, selector2[ 2 ] ) )
+    if( _.regexpsEquivalentAny( fop.prefix, selector2[ 0 ] ) && _.regexpsEquivalentAny( fop.postfix, selector2[ 2 ] ) )
     {
       return fop.onSelectorReplicate.call( it, _.props.extend( null, o, { selector : selector2[ 1 ] } ) );
     }
