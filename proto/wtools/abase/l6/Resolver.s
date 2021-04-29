@@ -111,7 +111,7 @@ function head( routine, args )
 
   if( _.routineIs( routine ) )
   o.Looker = o.Looker || routine.defaults;
-  else if( _.objectIs( routine ) )
+  else if( _.object.isBasic( routine ) )
   o.Looker = o.Looker || routine;
   else _.assert( 0 );
 
@@ -682,8 +682,8 @@ function classDefine( o )
 {
 
   _.routine.options_( classDefine, o );
-  _.assert( _.objectIs( this.Resolver ) );
-  _.assert( _.objectIs( this.Resolver.Selector ) );
+  _.assert( _.object.isBasic( this.Resolver ) );
+  _.assert( _.object.isBasic( this.Resolver.Selector ) );
 
   o.replicator = o.replicator || Object.create( null );
   o.replicator.parent = o.replicator.parent || this.Resolver;
