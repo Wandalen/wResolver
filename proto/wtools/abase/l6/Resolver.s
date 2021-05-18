@@ -574,8 +574,8 @@ function onSelectorReplicateComposite( fop )
 {
 
   fop = _.routine.options_( onSelectorReplicateComposite, arguments );
-  fop.prefix = _.arrayAs( fop.prefix );
-  fop.postfix = _.arrayAs( fop.postfix );
+  fop.prefix = _.array.as( fop.prefix );
+  fop.postfix = _.array.as( fop.postfix );
   fop.onSelectorReplicate = fop.onSelectorReplicate || onSelectorReplicate;
 
   _.assert( _.strsAreAll( fop.prefix ) );
