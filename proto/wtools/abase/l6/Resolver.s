@@ -28,7 +28,7 @@ if( typeof module !== 'undefined' )
 
 const _global = _global_;
 const _ = _global_.wTools;
-const ParentReplicator = _.replicator.Replicator; /* xxx0 : inherit from looker directly? */
+const ParentReplicator = _.replicator.Replicator; /* xxx : inherit from looker directly? */
 const ParentSelector = _.selector.Selector;
 _.resolver = _.resolver || Object.create( _.replicator );
 _.resolver.functor = _.resolver.functor || Object.create( _.selector.functor );
@@ -183,7 +183,7 @@ function iteratorInitEnd( iterator )
 
   _.assert( iterator.iteratorProper( iterator ) );
   _.assert( !iterator.recursive || !!iterator.onSelectorReplicate, () => 'For recursive selection onSelectorReplicate should be defined' );
-  _.assert( iterator.onUp2 === null ); /* xxx0 : hide this defaults. write test */
+  _.assert( iterator.onUp2 === null ); /* xxx : hide this defaults. write test */
   _.assert( iterator.onDown2 === null );
   _.assert( iterator.Resolver === undefined );
   _.assert( iterator.resolvingRecursive === null );
@@ -247,7 +247,9 @@ function _replicateUp()
         it.iterable = null;
         it.srcChanged();
       }
+      debugger;
       let sit = it._select( visited );
+      debugger;
       selector = undefined;
       /* xxx : write test resolving undefined */
       /* xxx : use sit.error? */
@@ -266,7 +268,7 @@ function _replicateUp()
         else
         it.dst = undefined;
         it.continue = false;
-        it.dstMaking = false; /* xxx0 */
+        it.dstMaking = false; /* xxx */
       }
       else
       {
@@ -279,14 +281,14 @@ function _replicateUp()
             // if( !sit.error )
             it.dst = sit.result;
             it.continue = false;
-            it.dstMaking = false; /* xxx0 */
+            it.dstMaking = false; /* xxx */
           }
         }
         else
         {
           it.dst = sit.result;
           it.continue = false;
-          it.dstMaking = false; /* xxx0 */
+          it.dstMaking = false; /* xxx */
         }
       }
     }
@@ -333,7 +335,7 @@ function _replicateDown()
 
 //
 
-function selectorOptionsForSelectFrom( o ) /* xxx0 : redesign? */
+function selectorOptionsForSelectFrom( o ) /* xxx : redesign? */
 {
   let it = this;
 
@@ -380,9 +382,6 @@ function perform()
   let it = this;
 
   it.performBegin();
-
-  // if( it.currentModule && it.currentModule.qualifiedName === 'module::module-a' )
-  // debugger;
 
   try
   {
@@ -434,7 +433,7 @@ function _selectOptionsMake()
 
   _.assert( arguments.length === 0 );
 
-  let op = _.props.extend( null, it.optionsForSelect ); /* xxx0 : optimize */
+  let op = _.props.extend( null, it.optionsForSelect ); /* xxx : optimize */
   op.replicateIteration = it;
   op.selector = it.src;
   op.Looker = it.Selector;
@@ -461,24 +460,11 @@ function _select( visited )
   let op = it._selectOptionsMake();
   op.visited = visited;
 
-  // let op = _.props.extend( null, it.optionsForSelect ); /* xxx0 : optimize */
-  // op.replicateIteration = it;
-  // op.selector = it.src;
-  // op.visited = visited;
-  // op.Looker = it.Selector;
-
-  // _.assert( _.strIs( op.selector ) );
-  // _.assert( !!it.Selector );
-  // _.assert( _.routineIs( op.Looker.exec ) );
   _.assert( !_.longHas( visited, op.selector ), () => `Loop selecting ${op.selector}` );
 
   visited.push( op.selector );
 
-  // if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
-  // debugger;
   let sit = op.Looker.execIt( op );
-  // if( op.selector === 'submodule::sub-a/path::exported.files.proto.export' )
-  // debugger;
 
   _.assert( sit.iterator === op );
   _.assert( sit.iterator.state === 2 );
@@ -717,7 +703,7 @@ let LookerResolverSelector =
   constructor : function Selector(){},
   selectorOptionsForSelectFrom,
   iterate : selectorIterate,
-  /* xxx0 : introduce iteratorInitEnd for Selector? */
+  /* xxx : introduce iteratorInitEnd for Selector? */
 }
 
 let IteratorResolverSelector =
@@ -733,7 +719,7 @@ let IterationPreserveResolverSelector =
 {
 }
 
-let ResolverSelectorPreserve = /* xxx0 */
+let ResolverSelectorPreserve = /* xxx */
 {
 }
 
