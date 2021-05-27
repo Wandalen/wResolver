@@ -774,6 +774,10 @@ let IteratorResolverReplicator =
   optionsForSelect : null,
   onUp2 : null,
   onDown2 : null,
+
+  // composite : false,
+  // compositeRoot : null,
+
 }
 
 let IterationResolverReplicator =
@@ -798,9 +802,12 @@ let Resolver = _.looker.classDefine
 });
 
 _.assert( Resolver.selector === null );
-_.assert( Resolver.Iteration.compositeRoot === undefined );
+// _.assert( Resolver.Iteration.compositeRoot === undefined );
+_.assert( Resolver.Iteration.compositeRoot === null );
+// _.assert( Resolver.Iterator.compositeRoot === null );
 _.assert( Resolver.Iterator.compositeRoot === undefined );
-_.assert( Resolver.compositeRoot !== undefined );
+_.assert( Resolver.compositeRoot === undefined );
+// _.assert( Resolver.compositeRoot !== undefined );
 _.assert( Resolver.missingAction !== undefined );
 _.assert( Resolver._onSelectorReplicateDefault === _onSelectorReplicateDefault );
 
