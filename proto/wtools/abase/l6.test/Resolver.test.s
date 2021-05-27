@@ -1412,8 +1412,8 @@ function optionMissingAction( test )
       if( env.missingAction === 'error' )
       {
         test.true( _.errIs( got ) );
-        test.true( got instanceof _.looker.LookingError );
-        test.identical( got.LookingError, true );
+        test.true( got instanceof _.looker.SeekingError );
+        test.identical( got.SeekingError, true );
         test.identical( got.ResolvingError, true );
         test.equivalent( _.ct.strip( got.originalMessage ), errorMessage );
         test.true( got === iterator.error );
@@ -1430,8 +1430,8 @@ function optionMissingAction( test )
     {
       test.true( _.errIs( got ) );
       test.identical( env.missingAction, 'throw' );
-      test.true( got instanceof _.looker.LookingError );
-      test.identical( got.LookingError, true );
+      test.true( got instanceof _.looker.SeekingError );
+      test.identical( got.SeekingError, true );
       test.identical( got.ResolvingError, true );
       test.true( got === iterator.error );
       test.equivalent( _.ct.strip( got.originalMessage ), errorMessage );

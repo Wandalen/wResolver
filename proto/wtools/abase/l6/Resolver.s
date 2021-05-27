@@ -46,8 +46,8 @@ _.assert( !!ParentSelector );
 let Prime =
 {
 
-  ... _.props.extend( null, _.selector.Looker.Prime ),
-  ... _.props.extend( null, _.replicator.Looker.Prime ),
+  ... _.props.extend( null, _.selector.Seeker.Prime ),
+  ... _.props.extend( null, _.replicator.Seeker.Prime ),
 
   missingAction : 'throw',
   onSelectorUp : null,
@@ -107,12 +107,12 @@ SelectorPrime.replicateIteration = null;
 function head( routine, args )
 {
   _.assert( arguments.length === 2 );
-  let o = routine.defaults.Looker.optionsFromArguments( args );
+  let o = routine.defaults.Seeker.optionsFromArguments( args );
 
   if( _.routineIs( routine ) )
-  o.Looker = o.Looker || routine.defaults;
+  o.Seeker = o.Seeker || routine.defaults;
   else if( _.object.isBasic( routine ) )
-  o.Looker = o.Looker || routine;
+  o.Seeker = o.Seeker || routine;
   else _.assert( 0 );
 
   _.assert( _.routineIs( routine ) || _.auxIs( routine ) );
@@ -121,7 +121,7 @@ function head( routine, args )
   else if( routine !== null )
   _.map.assertHasOnly( o, routine );
 
-  let it = o.Looker.optionsToIteration( null, o );
+  let it = o.Seeker.optionsToIteration( null, o );
 
   return it;
 }
@@ -339,12 +339,12 @@ function selectorOptionsForSelectFrom( o ) /* xxx : redesign? */
 {
   let it = this;
 
-  _.assert( !!o.Looker.Selector );
-  _.assert( !!o.Looker.Selector );
+  _.assert( !!o.Seeker.Selector );
+  _.assert( !!o.Seeker.Selector );
 
   let o2 = _.mapOnly_( null, o, it.Selector.Prime );
   o2.src = o.srcForSelect;
-  o2.Looker = o.Looker.Selector;
+  o2.Seeker = o.Seeker.Selector;
   o2.recursive = Infinity;
   o2.onSelectorUndecorate = o.onSelectorUndecorate;
   o2.onQuantitativeFail = o.onQuantitativeFail;
@@ -352,7 +352,7 @@ function selectorOptionsForSelectFrom( o ) /* xxx : redesign? */
   o2.onUpBegin = o.onUpBegin;
   o2.onUpEnd = o.onUpEnd;
 
-  delete o2.Looker;
+  delete o2.Seeker;
   delete o2.recursive;
   delete o2.onUp;
   delete o2.onDown;
@@ -436,11 +436,11 @@ function _selectOptionsMake()
   let op = _.props.extend( null, it.optionsForSelect ); /* xxx : optimize */
   op.replicateIteration = it;
   op.selector = it.src;
-  op.Looker = it.Selector;
+  op.Seeker = it.Selector;
 
   _.assert( _.strIs( op.selector ) );
   _.assert( !!it.Selector );
-  _.assert( _.routineIs( op.Looker.exec ) );
+  _.assert( _.routineIs( op.Seeker.exec ) );
 
   return op;
 }
@@ -464,7 +464,7 @@ function _select( visited )
 
   visited.push( op.selector );
 
-  let sit = op.Looker.execIt( op );
+  let sit = op.Seeker.execIt( op );
 
   _.assert( sit.iterator === op );
   _.assert( sit.iterator.state === 2 );
@@ -728,7 +728,7 @@ let Selector = _.looker.classDefine
   name : 'Selector',
   parent : ParentSelector,
   prime : SelectorPrime,
-  looker : LookerResolverSelector,
+  seeker : LookerResolverSelector,
   iterator : IteratorResolverSelector,
   iteration : IterationResolverSelector,
   iterationPreserve : IterationPreserveResolverSelector,
@@ -791,7 +791,7 @@ let Resolver = _.looker.classDefine
   name : 'Resolver',
   parent : ParentReplicator,
   prime : Prime,
-  looker : LookerResolverReplicator,
+  seeker : LookerResolverReplicator,
   iterator : IteratorResolverReplicator,
   iteration : IterationResolverReplicator,
   iterationPreserve : IterationPreserveResolverReplicator,
@@ -829,7 +829,7 @@ const resolve = Resolver.exec;
 const resolveIt = Resolver.execIt;
 let resolveMaybe = _.routine.uniteInheriting( Resolver.exec.head, Resolver.exec.body );
 var defaults = resolveMaybe.defaults;
-defaults.Looker = defaults;
+defaults.Seeker = defaults;
 defaults.missingAction = 'undefine';
 _.assert( resolveMaybe.body !== Resolver.exec.body );
 _.assert( resolveMaybe.defaults.missingAction === 'undefine' );
@@ -849,7 +849,7 @@ let ResolverExtension =
 {
 
   name : 'resolver',
-  Looker : Resolver,
+  Seeker : Resolver,
   Resolver,
 
   classDefine,
