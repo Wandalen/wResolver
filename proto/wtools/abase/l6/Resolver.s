@@ -247,9 +247,9 @@ function _replicateUp()
         it.iterable = null;
         it.srcChanged();
       }
-      debugger;
+      // debugger;
       let sit = it._select( visited );
-      debugger;
+      // debugger;
       selector = undefined;
       /* xxx : write test resolving undefined */
       /* xxx : use sit.error? */
@@ -878,8 +878,8 @@ let ToolsExtension =
 
 const Self = Resolver;
 _.props.extend( _, ToolsExtension );
-_.props.extend( _.resolver, ResolverExtension );
-_.props.extend( _.resolver.functor, FunctorExtension );
+/* _.props.extend */Object.assign( _.resolver, ResolverExtension );
+/* _.props.extend */Object.assign( _.resolver.functor, FunctorExtension );
 
 // --
 // export
