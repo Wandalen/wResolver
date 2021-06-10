@@ -8,7 +8,8 @@ if( typeof module !== 'undefined' )
   const _ = require( '../../../node_modules/Tools' );
 
   _.include( 'wTesting' );
-  _.include( 'wLogger' );
+  // _.include( 'wLogger' );
+  _.include( 'wStringer' );
 
   require( '../l6/Resolver.s' );
 }
