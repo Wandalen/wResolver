@@ -247,16 +247,10 @@ function _replicateUp()
         it.iterable = null;
         it.srcChanged();
       }
-      // debugger;
       let sit = it._select( visited );
-      // debugger;
       selector = undefined;
-      /* xxx : write test resolving undefined */
-      /* xxx : use sit.error? */
-      // if( sit.result !== undefined && it.resolvingRecursive && visited.length <= it.resolvingRecursive )
       if( sit.error )
       {
-        // if( !sit.error )
         it.errResolvingHandle
         ({
           missingAction : it.missingAction,
@@ -268,7 +262,7 @@ function _replicateUp()
         else
         it.dst = undefined;
         it.continue = false;
-        it.dstMaking = false; /* xxx */
+        it.dstMaking = false; /* xxx : remove? */
       }
       else
       {
@@ -278,7 +272,6 @@ function _replicateUp()
           selector = it.onSelectorReplicate({ selector : sit.result, counter });
           if( selector === undefined )
           {
-            // if( !sit.error )
             it.dst = sit.result;
             it.continue = false;
             it.dstMaking = false; /* xxx */
