@@ -1,6 +1,6 @@
 {
   "name": "wresolver",
-  "version": "0.3.191",
+  "version": "0.3.192",
   "description": "Collection of cross-platform routines to resolve complex data structures.",
   "author": "Kostiantyn Wandalen <wanalen@01.school>",
   "license": "MIT",
