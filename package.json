@@ -1,6 +1,6 @@
 {
   "name": "wresolver",
-  "version": "0.3.195",
+  "version": "0.3.196",
   "description": "Collection of cross-platform routines to resolve complex data structures.",
   "author": "Kostiantyn Wandalen <wanalen@01.school>",
   "license": "MIT",
@@ -23,11 +23,11 @@
     "url": "https://github.com/Wandalen/wResolver/issues"
   },
   "dependencies": {
-    "wTools": "stable",
-    "wselector": "stable"
+    "wTools": "latest",
+    "wselector": "latest"
   },
   "devDependencies": {
-    "wTesting": "stable",
+    "wTesting": "latest",
     "eslint": "7.1.0"
   },
   "keywords": [
