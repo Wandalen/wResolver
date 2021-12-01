@@ -3,8 +3,8 @@ root:
   - wResolver.out
 consistency:
   ../will.yml: &ref_0
-    hash: 12eb1b55cffd3604e4bdc489ceeb7bfd
-    size: 6369
+    hash: 0151bc23952d001e6348c708b1464f4a
+    size: 6377
 module:
   wResolver.out:
     about:
@@ -1452,5 +1452,5 @@ module:
           - 'build::npm'
     consistency:
       ../will.yml:
-        hash: 12eb1b55cffd3604e4bdc489ceeb7bfd
-        size: 6369
+        hash: 0151bc23952d001e6348c708b1464f4a
+        size: 6377
