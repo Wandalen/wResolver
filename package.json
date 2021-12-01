@@ -2,7 +2,7 @@
   "name": "wresolver",
   "version": "0.3.216",
   "description": "Collection of cross-platform routines to resolve complex data structures.",
-  "author": "Kostiantyn Wandalen <wanalen@01.school>",
+  "author": "Kostiantyn Wandalen <wandalen@obox.systems>",
   "license": "MIT",
   "main": "proto/node_modules/wresolver",
   "files": [
